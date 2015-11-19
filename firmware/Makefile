@@ -3,9 +3,10 @@
 #
 
 MCU = atmega88
-F_CPU = 8000000
+F_CPU = 16000000
 
-OBJS = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o chords.o
+OBJS = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o chords.o usb.o
+OBJS += usbdrv/usbdrv.o usbdrv/usbdrvasm.o
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
@@ -54,10 +55,10 @@ clean:
 	rm -f $(OBJS)
 
 distclean: clean
+	rm -f $(OBJS:.o=.lst)
+	rm -f $(OBJS:.o=.map)
 	rm -f *.elf
 	rm -f *.hex
-	rm -f *.lst
-	rm -f *.map
 
 # Listing of phony targets.
 .PHONY : all fuses program clean distclean

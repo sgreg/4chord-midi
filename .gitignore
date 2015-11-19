@@ -1,6 +1,6 @@
 **/.*.swp
-firmware/*.o
-firmware/*.lst
-firmware/*.map
-firmware/*.elf
-firmware/*.hex
+firmware/**/*.o
+firmware/**/*.lst
+firmware/**/*.map
+firmware/**/*.elf
+firmware/**/*.hex

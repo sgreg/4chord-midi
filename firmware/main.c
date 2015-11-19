@@ -9,9 +9,9 @@
  *   1  /Reset
  *   2  PD0     I   UART RXD
  *   3  PD1     O   UART TXD
- *   4  PD2     (unused)
- *   5  PD3     (unused)
- *   6  PD4     (unused)
+ *   4  PD2     -   INT0 USB D+
+ *   5  PD3     -   USB D-
+ *   6  PD4     O   USB Reset
  *   7  VCC     -
  *   8  GND     -
  *   9  PB6     -   (XTAL1)
@@ -45,6 +45,7 @@
 #include "buttons.h"
 #include "gui.h"
 #include "uart.h"
+#include "usbdrv/usbdrv.h"
 
 const char uart_banner[] PROGMEM =
 "\f\r\n\
@@ -66,13 +67,19 @@ main(void) {
     DDRC = 0x00;
     /* enable pullups for all inputs */
     PORTC = 0xff;
-    /* set PB1 as output, rest input */
+    /* set PB1 as output, rest input. */
     DDRD  = (1 << DDD1);
-    /* set PB1 high, enable pullups for all inputs */
-    PORTD = ~(1 << PD1);
+    /* set PB1 high, enable pullups for all inputs except V-USB ones */
+    PORTD = ~((1 << PD1) | (1 << PD2) | (1 << PD3) | (1 << PD4));
 
     uart_init(UART_BRATE_38400_8MHZ);
     lcd_init();
+
+    /* set up V-USB, see also http://vusb.wikidot.com/driver-api */
+    usbDeviceDisconnect();
+    _delay_ms(300);
+    usbDeviceConnect();
+    usbInit();
 
     uart_print_pgm(uart_banner);
     gui_printlogo();
@@ -92,6 +99,7 @@ main(void) {
     sei();
 
     while (1) {
+        usbPoll();
         button_input_loop();
         _delay_ms(10);
     }
