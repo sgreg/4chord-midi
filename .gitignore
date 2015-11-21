@@ -4,3 +4,4 @@ firmware/**/*.lst
 firmware/**/*.map
 firmware/**/*.elf
 firmware/**/*.hex
+tools/atmega328p_fuse_dump
