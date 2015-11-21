@@ -1,3 +1,9 @@
+/*
+ * 4chord midi - USB MIDI
+ *
+ * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ *
+ */
 #include <string.h>
 #include <stdint.h>
 #include <util/delay.h>

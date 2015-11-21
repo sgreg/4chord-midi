@@ -1,3 +1,9 @@
+/*
+ * 4chord midi - USB MIDI
+ *
+ * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ *
+ */
 #ifndef _USB_H_
 #define _USB_H_
 

@@ -8,6 +8,20 @@ F_CPU = 16000000
 OBJS = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o chords.o usb.o
 OBJS += usbdrv/usbdrv.o usbdrv/usbdrvasm.o
 
+
+# Fuses
+# If you're looking for a way to fuck up your controller, here you go.
+#
+# To be a bit on the safer side, run `make fuses-dump` using the
+# ../tools/atmega328p_fuse_dump tool and verify its output are the
+# correct fuse settings.
+#
+FUSE_LOW = 0xf7
+FUSE_HIGH = 0xd9
+FUSE_EXTENDED = 0xff
+FUSE_DUMP_TOOL = ../tools/atmega328p_fuse_dump
+
+
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
@@ -44,8 +58,16 @@ all: 4chordmidi.hex
 	$(CC) -c $(CFLAGS) -x assembler-with-cpp $(ASFLAGS_ASM) $< -o $@
 
 # Fuses settings: CLK 8MHz internal oscillator, no clock divider, 6ck/14ck + 65ms
-fuses:
-	$(AVRDUDE) $(AVRDUDE_FLAGS) -U lfuse:w:0xe2:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
+fuses-dump:
+	@if [ -x $(FUSE_DUMP_TOOL) ] ; then \
+		$(FUSE_DUMP_TOOL) $(FUSE_LOW) $(FUSE_HIGH) $(FUSE_EXTENDED) ; \
+		echo "" ; \
+	else \
+		echo "Fuse Dump Tool not available" ; \
+	fi
+
+fuses: fuses-dump
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -U lfuse:w:$(FUSE_LOW):m -U hfuse:w:$(FUSE_HIGH):m -U efuse:w:$(FUSE_EXTENDED):m
 
 
 program:

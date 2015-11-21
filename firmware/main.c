@@ -72,7 +72,7 @@ main(void) {
     /* set PB1 high, enable pullups for all inputs except V-USB ones */
     PORTD = ~((1 << PD1) | (1 << PD2) | (1 << PD3) | (1 << PD4));
 
-    uart_init(UART_BRATE_38400_8MHZ);
+    uart_init(UART_BRATE_38400_16MHZ);
     lcd_init();
 
     /* set up V-USB, see also http://vusb.wikidot.com/driver-api */
