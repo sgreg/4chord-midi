@@ -1,6 +1,7 @@
 **/.*.swp
-firmware/*.o
-firmware/*.lst
-firmware/*.map
-firmware/*.elf
-firmware/*.hex
+firmware/**/*.o
+firmware/**/*.lst
+firmware/**/*.map
+firmware/**/*.elf
+firmware/**/*.hex
+tools/atmega328p_fuse_dump
