@@ -2,7 +2,7 @@
 # 4chord midi - Makefile
 #
 
-MCU = atmega88
+MCU = atmega328p
 F_CPU = 16000000
 
 OBJS = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o chords.o usb.o
