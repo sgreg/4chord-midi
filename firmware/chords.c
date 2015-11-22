@@ -6,6 +6,14 @@
  */
 #include <stdint.h>
 #include "uart.h"
+#include "usb.h"
+
+/* single notes array for each chord key */
+static const uint8_t notes[] = {48, 55, 57, 53}; /* C3, G3, A3, F3 */
+#define VELOCITY 0x60
+
+/* key pressed, could also set button as oneshot, but that'll have to change anyway later */
+static uint8_t pressed;
 
 /**
  * Button press callback function.
@@ -14,14 +22,15 @@
  *
  * @param arg Pressed button number, given as pointer to uint8_t
  */
+
 void chord_press(void *arg)
 {
-    // for now, just write some debug info to UART
     uint8_t chord_num = *((uint8_t *) arg);
-    uart_print("chord ");
-    uart_putint(chord_num, 1);
-    uart_print(" pressed");
-    uart_newline();
+
+    if (!pressed) {
+        midi_msg_note_on(notes[chord_num], VELOCITY);
+        pressed = 1;
+    }
 }
 
 /**
@@ -33,11 +42,9 @@ void chord_press(void *arg)
  */
 void chord_release(void *arg)
 {
-    // for now, just write some debug info to UART
     uint8_t chord_num = *((uint8_t *) arg);
-    uart_print("chord ");
-    uart_putint(chord_num, 1);
-    uart_print(" released");
-    uart_newline();
+
+    midi_msg_note_off(notes[chord_num], VELOCITY);
+    pressed = 0;
 }
 
