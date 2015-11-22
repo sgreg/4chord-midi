@@ -10,8 +10,8 @@
  *   2  PD0     I   UART RXD
  *   3  PD1     O   UART TXD
  *   4  PD2     -   INT0 USB D+
- *   5  PD3     -   USB D-
- *   6  PD4     O   USB Reset
+ *   6  PD3     O   USB Reset
+ *   5  PD4     -   USB D-
  *   7  VCC     -
  *   8  GND     -
  *   9  PB6     -   (XTAL1)
@@ -59,6 +59,8 @@ const char uart_banner[] PROGMEM =
 
 int
 main(void) {
+    uint8_t i;
+
     /* set PB0, PB1, PB2, PB3, PB4 as output, rest input */
     DDRB  = (1 << DDB0) | (1 << DDB1) | (1 << DDB2) | (1 << DDB3) | (1 << DDB5);
     /* set PB2 high, all other outputs low, enable pullups for all inputs */
@@ -73,7 +75,10 @@ main(void) {
     PORTD = ~((1 << PD1) | (1 << PD2) | (1 << PD3) | (1 << PD4));
 
     uart_init(UART_BRATE_38400_16MHZ);
+    uart_print_pgm(uart_banner);
+
     lcd_init();
+    gui_printlogo();
 
     /* set up V-USB, see also http://vusb.wikidot.com/driver-api */
     usbDeviceDisconnect();
@@ -81,9 +86,13 @@ main(void) {
     usbDeviceConnect();
     usbInit();
 
-    uart_print_pgm(uart_banner);
-    gui_printlogo();
-    _delay_ms(2000);
+    sei();
+
+    /* delay to display GUI logo, but also poll USB or else USB fails */
+    for (i = 0; i < 150; i++) {
+        usbPoll();
+        _delay_ms(10);
+    }
 
     /* map buttons to inputs */
     button_map_port(BUTTON_MENU_PREV,   &PIND, 5);
@@ -96,12 +105,9 @@ main(void) {
     
     gui_start();
 
-    sei();
-
     while (1) {
         usbPoll();
         button_input_loop();
-        _delay_ms(10);
     }
 }
 
