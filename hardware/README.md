@@ -18,3 +18,6 @@ Note, they also offer a [breakout board](https://www.olimex.com/Products/Modules
 
 It seems KiCad doesn't have a footprint for the connector out of the box, so I created one myself, which you'll need to import to KiCad if you want to modify the hardware.
 Check my [kicad-libs repo](https://github.com/sgreg/kicad-libs) for more information.
+
+#### Notes on PCB artwork
+As with the LCD connector footprints, the logos used on the PCB can be found in my [kicad-libs repo](https://github.com/sgreg/kicad-libs).
