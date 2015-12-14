@@ -7,3 +7,4 @@ firmware/**/*.hex
 tools/atmega328p_fuse_dump
 hardware/**/*-cache.lib
 hardware/**/*.bak
+hardware/**/*.kicad_pcb-bak
