@@ -3,57 +3,23 @@
  *
  * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
  *
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
  *
- * TODO  move current settings (menu, tempo, key, mode) somewhere else to handle better
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
 #include <stdint.h>
 #include "graphics.h"
 #include "lcd3310.h"
-
-/* currently selected menu item */
-uint8_t menu_current;
-/* currently selected tempo */
-uint8_t tempo_current;
-/* currently selected mode */
-uint8_t mode_current;
-/* currently selected chord */
-uint8_t chord_current;
-
-typedef enum {
-    MENU_MODE,
-    MENU_KEY,
-    MENU_TEMPO,
-    MENU_MAX
-} gui_menu_items;
-
-typedef enum {
-    CHORD_C,
-    CHORD_C_SHARP,
-    CHORD_D,
-    CHORD_D_SHARP,
-    CHORD_E,
-    CHORD_F,
-    CHORD_F_SHARP,
-    CHORD_G,
-    CHORD_G_SHARP,
-    CHORD_A,
-    CHORD_B_FLAT,
-    CHORD_B,
-    CHORD_MAX
-} gui_chord_items;
-
-typedef enum {
-    MODE_CHORD,
-    MODE_ARP,
-    MODE_ARP2,
-    MODE_FOO,
-    MODE_MAX
-} gui_mode_items;
-
-#define TEMPO_MIN 40
-#define TEMPO_DEFAULT 120
-#define TEMPO_MAX 180
+#include "menu.h"
 
 /* graphics data array for menus */
 static const unsigned char *menus[] = {
@@ -102,83 +68,46 @@ static const unsigned char *chords[][2] = {
 
 
 /**
- * Set next menu item and update the LCD
+ * Print the startup logo on the display
  */
-static void
-menu_next(void)
+void
+gui_printlogo(void)
 {
-    if (++menu_current == MENU_MAX) {
-        menu_current = 0;
-    }
-
-    lcd_set_menu(menus[menu_current]);
-    lcd_update();
-}
-
-
-/**
- * Decrement the playback mode and update the LCD.
- */
-static void
-mode_next(void) {
-    if (++mode_current == MODE_MAX) {
-        mode_current = 0;
-    }
-
-    lcd_set_mode(modes[mode_current]);
-    lcd_update();
+    lcd_fullscreen(gfx_logo);
 }
 
 /**
- * Increment the playback mode and update LCD.
+ * Write the given menu item graphic and update the LCD.
+ * @param Menu item index in accordance with menu.h values
  */
-static void
-mode_prev(void) {
-    if (--mode_current == 0xff) {
-        mode_current = MODE_MAX - 1;
-    }
-
-    lcd_set_mode(modes[mode_current]);
-    lcd_update();
-}
-
-
-/**
- * Write the currently selected key chord to the LCD memory.
- * Note, no LCD update is performed, call lcd_update() manually.
- */
-static void
-set_chord(const unsigned char *chord[2])
+void
+gui_set_menu(menu_item_t item)
 {
-    lcd_set_chord(chord);
-}
-
-/**
- * Increment the key chord and update the LCD.
- */
-static void
-key_next(void) {
-    if (++chord_current == CHORD_MAX) {
-        chord_current = 0;
-    }
-
-    set_chord(chords[chord_current]);
+    lcd_set_menu(menus[item]);
     lcd_update();
 }
 
 /**
- * Decrement the key chord and update the LCD.
+ * Write the given playback mode item graphic and update the LCD
+ * @param Playback mode item index in accordance with menu.h values
  */
-static void
-key_prev(void) {
-    if (--chord_current == 0xff) {
-        chord_current = CHORD_MAX - 1;
-    }
-
-    set_chord(chords[chord_current]);
+void
+gui_set_playback_mode(playback_mode_item_t item)
+{
+    lcd_set_mode(modes[item]);
     lcd_update();
 }
 
+/**
+ * Write the given playback key item graphic and update the LCD
+ * @param Playback key item index in accordance with menu.h values
+ */
+void
+gui_set_playback_key(playback_mode_item_t item)
+{
+    lcd_set_chord(chords[item]);
+    lcd_update();
+}
 
 /**
  * Set tempo to given value and update the LCD.
@@ -188,8 +117,8 @@ key_prev(void) {
  *
  * @param tempo New tempo
  */
-static void
-set_tempo(uint8_t tempo)
+void
+gui_set_playback_tempo(uint8_t tempo)
 {
     const unsigned char *digit_graphics[3];
     uint8_t digits[3];
@@ -209,101 +138,5 @@ set_tempo(uint8_t tempo)
 
     lcd_set_tempo(digit_graphics);
     lcd_update();
-}
-
-/**
- * Increase tempo and call set_tempo() to update the LCD
- */
-static void
-tempo_up(void) {
-    if (tempo_current < TEMPO_MAX) {
-        tempo_current++;
-        set_tempo(tempo_current);
-    }
-}
-
-/**
- * Decrease tempo and call set_tempo() to update the LCD
- */
-static void
-tempo_down(void) {
-    if (tempo_current > TEMPO_MIN) {
-        tempo_current--;
-        set_tempo(tempo_current);
-    }
-}
-
-/**
- * Print the GUI on the display
- */
-void
-gui_start(void)
-{
-    menu_current  = MENU_MODE;
-    chord_current = CHORD_C;
-    tempo_current = TEMPO_DEFAULT;
-    mode_current  = MODE_CHORD;
-
-    lcd_clear();
-    lcd_set_menu(menus[menu_current]);
-    lcd_set_chord(chords[chord_current]);
-    set_tempo(tempo_current);
-    lcd_set_mode(modes[mode_current]);
-    lcd_update();
-}
-
-/**
- * Print the startup logo on the display
- */
-void
-gui_printlogo(void)
-{
-    lcd_fullscreen(gfx_logo);
-}
-
-
-/* functions to call from gui_menu_next() depending on the current state */
-static void (*menu_next_handlers[3])(void) = {
-    mode_next,
-    key_next,
-    tempo_up
-};
-
-/**
- * Button press callback function for Menu Next button
- * @param arg Unused
- */
-void
-gui_menu_next(void *arg __attribute__((unused)))
-{
-    menu_next_handlers[menu_current]();
-}
-
-/* functions to call from gui_menu_prev() depending on the current state */
-void (*menu_prev_handlers[3])(void) = {
-    mode_prev,
-    key_prev,
-    tempo_down
-};
-
-/**
- * Button press callback function for Menu Previous button
- * @param arg Unused
- */
-void
-gui_menu_prev(void *arg __attribute__((unused)))
-{
-    menu_prev_handlers[menu_current]();
-}
-
-
-/**
- * Button press callback function for Menu Select button
- * @param arg Unused
- */
-void
-gui_menu_select(void *arg __attribute__((unused)))
-{
-    menu_next();
 }
 

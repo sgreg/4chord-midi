@@ -5,7 +5,7 @@
 MCU = atmega328p
 F_CPU = 16000000
 
-OBJS = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o chords.o usb.o
+OBJS = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o menu.o chords.o usb.o
 OBJS += usbdrv/usbdrv.o usbdrv/usbdrvasm.o
 
 
