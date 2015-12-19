@@ -258,14 +258,30 @@ usbFunctionWriteOut(uchar * data, uchar len)
 }
 
 
-static uint8_t midi_buf[4];
 
+/**
+ * Generic USB MIDI message send function.
+ * USB MIDI messages are always 4 byte long (padding unused bytes with zero).
+ *
+ * See also chapter 4 in the Universal Serial Bus Device Class Definition
+ * for MIDI Devices Release 1.0 document found at
+ * http://www.usb.org/developers/docs/devclass_docs/midi10.pdf
+ *
+ * For more information on MIDI messages, refer to Summary of MIDI Messages,
+ * found at http://www.midi.org/techspecs/midimessages.php
+ *
+ * @param byte0 USB cable number and code index number
+ * @param byte1 MIDI message status byte
+ * @param byte2 MIDI message data byte 0
+ * @param byte3 MIDI message data byte 1
+ */
 void
 usb_send_midi_message(uint8_t byte0, uint8_t byte1, uint8_t byte2, uint8_t byte3)
 {
-    uint8_t i = 50;
+    static uint8_t midi_buf[4];
+    uint8_t retries = 10;
 
-    while (--i) {
+    while (--retries) {
         if (usbInterruptIsReady()) {
             midi_buf[0] = byte0;
             midi_buf[1] = byte1;
@@ -276,7 +292,6 @@ usb_send_midi_message(uint8_t byte0, uint8_t byte1, uint8_t byte2, uint8_t byte3
         }
         _delay_ms(2);
     }
-
-    uart_print("damn..\r\n");
+    uart_print("USB send fail\r\n");
 }
 
