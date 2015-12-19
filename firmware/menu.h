@@ -47,9 +47,9 @@ typedef enum {
 /* Playback mode list */
 typedef enum {
     PLAYBACK_MODE_CHORD,
+    PLAYBACK_MODE_CHORD_ARP,
+    PLAYBACK_MODE_CHORD_ARP_OCTAVE,
     PLAYBACK_MODE_ARP,
-    PLAYBACK_MODE_ARP2,
-    PLAYBACK_MODE_FOO,
     PLAYBACK_MODE_MAX
 } playback_mode_item_t;
 

@@ -55,6 +55,7 @@
 #include <util/delay.h>
 #include "lcd3310.h"
 #include "buttons.h"
+#include "playback.h"
 #include "gui.h"
 #include "uart.h"
 #include "usbdrv/usbdrv.h"
@@ -121,6 +122,7 @@ main(void) {
     while (1) {
         usbPoll();
         button_input_loop();
+        playback_poll();
     }
 }
 

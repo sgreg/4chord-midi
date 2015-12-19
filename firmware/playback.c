@@ -16,9 +16,12 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
+#include <stdio.h>
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include "menu.h"
+#include "playback.h"
+#include "timer.h"
 #include "usb.h"
 
 /* root notes array for each chord (I, V, vi, IV) in all keys (C..B) */
@@ -43,20 +46,35 @@ static const uint8_t third_offset[] = {4, 4, 3, 4};
 /* offset to the chord's perfect fifth, same for all */
 static const uint8_t fifth_offset = 7;
 
+/* offset to the root octave */
+static const uint8_t octave_offset = 12;
+
 /* MIDI note on velocity */
 #define VELOCITY 0x7f
 
 /* button press status */
 static uint8_t pressed;
 
-/* triad chord structure (root, major/minor third, perfect fifth) */
-typedef struct {
-    uint8_t root;
-    uint8_t third;
-    uint8_t fifth;
-} chord_t;
+extern playback_mode_t playback_mode_chord;
+extern playback_mode_t playback_mode_chord_arpeggio;
+extern playback_mode_t playback_mode_chord_arpeggio_octave;
+extern playback_mode_t playback_mode_arpeggio;
 
-/* global currently selected chord to play */
+/* array of available playback mode structures */
+static playback_mode_t *playback_modes[PLAYBACK_MODE_MAX] = {
+    &playback_mode_chord,
+    &playback_mode_chord_arpeggio,
+    &playback_mode_chord_arpeggio_octave,
+    &playback_mode_arpeggio
+};
+
+/* pointer to currently active playback mode, set in button press handler */
+static playback_mode_t *playback_mode;
+
+/* timer trigger status */
+static uint8_t playback_timer_triggered;
+
+/* currently selected chord to play */
 static chord_t chord;
 
 
@@ -73,10 +91,57 @@ construct_chord(uint8_t chord_num)
 {
     uint8_t key = menu_get_current_playback_key();
 
-    chord.root  = pgm_read_byte(&root_notes[key][chord_num]);
-    chord.third = chord.root + third_offset[chord_num];
-    chord.fifth = chord.root + fifth_offset;
+    chord.root   = pgm_read_byte(&root_notes[key][chord_num]);
+    chord.third  = chord.root + third_offset[chord_num];
+    chord.fifth  = chord.root + fifth_offset;
+    chord.octave = chord.root + octave_offset;
 }
+
+/**
+ * Set up the timer value based on the current playback tempo.
+ */
+static uint16_t
+playback_interval(void)
+{
+    uint8_t tempo = menu_get_current_playback_tempo();
+    /* TODO find alternative option, floating point op is very expensive */
+    float cycle = 60.0 / tempo;
+    uint16_t interval = (uint16_t) (TICKS_PER_CYCLE * cycle);
+    return interval;
+}
+
+/**
+ * Timer compare match interrupt callback.
+ * Use the playback_poll() function to check its state.
+ */
+static void
+playback_cycle_timer_callback(void)
+{
+    if (++playback_mode->count == 4) {
+        playback_mode->count = 0;
+    }
+    playback_timer_triggered = 1;
+}
+
+/**
+ * Playback mode poll function.
+ * If the cycle callback function is used by the playback mode, a timer is
+ * started according to the currently selected playback tempo. This function
+ * polls the status of the timer interrupt; if the cycle period is elapsed,
+ * the cycle callback function is executed.
+ */
+void
+playback_poll(void)
+{
+    if (playback_timer_triggered) {
+        if (playback_mode->cycle != NULL) {
+            playback_mode->cycle(&chord);
+        }
+
+        playback_timer_triggered = 0;
+    }
+}
+
 
 /**
  * Button press callback function.
@@ -92,9 +157,14 @@ playback_button_press(void *arg)
 
     if (!pressed) {
         construct_chord(chord_num);
-        midi_msg_note_on(chord.root, VELOCITY);
-        midi_msg_note_on(chord.third, VELOCITY);
-        midi_msg_note_on(chord.fifth, VELOCITY);
+        playback_mode = playback_modes[menu_get_current_playback_mode()];
+        if (playback_mode->start != NULL) {
+            playback_mode->start(&chord);
+        }
+
+        if (playback_mode->cycle != NULL) {
+            timer1_start(playback_interval(), playback_cycle_timer_callback);
+        }
         pressed = 1;
     }
 }
@@ -109,9 +179,37 @@ playback_button_press(void *arg)
 void
 playback_button_release(void *arg __attribute__((unused)))
 {
-    midi_msg_note_off(chord.root, VELOCITY);
-    midi_msg_note_off(chord.third, VELOCITY);
-    midi_msg_note_off(chord.fifth, VELOCITY);
     pressed = 0;
+    timer1_stop();
+    playback_mode->count = 0;
+
+    if (playback_mode->stop != NULL) {
+        playback_mode->stop(&chord);
+    }
+}
+
+
+/**
+ * Start playing a given MIDI note.
+ * Sends the note via USB as MIDI Note On message.
+ *
+ * @param note MIDI note to start playing
+ */
+void
+play_start_note(uint8_t note)
+{
+    midi_msg_note_on(note, VELOCITY);
+}
+
+/**
+ * Stop playing a given MIDI note.
+ * Sends the note via USB as MIDI Note Off message.
+ *
+ * @param note MIDI note to stop playing
+ */
+void
+play_stop_note(uint8_t note)
+{
+    midi_msg_note_off(note, VELOCITY);
 }
 

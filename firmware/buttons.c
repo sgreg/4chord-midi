@@ -30,7 +30,7 @@ typedef enum {
 } button_state;
 
 /* button handler callback function */
-typedef void (*button_callback)(void *);
+typedef void (*button_callback_t)(void *);
 
 /*
  * Internal button handler structure
@@ -50,10 +50,10 @@ struct button_handler {
     uint8_t oneshot;
     /* button release and press callback handlers */
     union {
-        button_callback callbacks[2];
+        button_callback_t callbacks[2];
         struct {
-            button_callback released_cb;
-            button_callback pressed_cb;
+            button_callback_t released_cb;
+            button_callback_t pressed_cb;
         };
     };
     /* button specific argument passed to callback handlers */
