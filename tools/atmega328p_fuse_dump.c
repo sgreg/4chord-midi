@@ -4,7 +4,7 @@
  * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
  *
  *
- * Outputs human readable representation of AVR ATmeta328p fuse bit settings.
+ * Outputs human readable representation of AVR ATmega328P fuse bit settings.
  *
  * Usage: ./atmega328p_fuse_dump <low> <high> <extended>
  *
@@ -31,9 +31,9 @@
 
 /*
  * Fuse byte representation.
- * Each of three fuse bytes is accessible in three ways:
+ * Each of the three fuse bytes are accessible in three ways:
  *      "bits" struct:   access single bits
- *      "fields" struct: access combined blocks that belong together
+ *      "fields" struct: access combined multi-bit fields
  *      "byte" integer:  direct integer value of the byte
  */
 union fuse_byte_low {
@@ -126,11 +126,11 @@ print_fuse_low(union fuse_byte_low *fuse)
 
     /* 
      * Clock startup time strings for different clock sources.
-     * Outer index is mapped below by the starttime_map array
+     * Outer index is mapped by the starttime_map array (see below)
      * Inner index is defined by fuse->fields.SUT
      */
     char *starttimes[][4] = {
-        { /* 0: CKSEL = 00xx external clock or internal osciallators */
+        { /* 0: CKSEL = 00xx external clock or internal osciallator */
             "6K CK / 14 CK + 0ms",
             "6K CK / 14 CK + 4.1ms",
             "6K CK / 14 CK + 65ms",
