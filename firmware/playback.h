@@ -1,5 +1,5 @@
 /*
- * 4chord midi - Chord playback
+ * 4chord midi - MIDI playback
  *
  * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
  *
@@ -16,8 +16,8 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#ifndef _CHORDS_H_
-#define _CHORDS_H_
+#ifndef _PLAYBACK_H_
+#define _PLAYBACK_H_
 
 /**
  * Button press callback function.
@@ -26,7 +26,7 @@
  *
  * @param arg Pressed button number, given as pointer to uint8_t
  */
-void chord_press(void *arg);
+void playback_button_press(void *arg);
 
 /**
  * Button release callback function.
@@ -35,6 +35,6 @@ void chord_press(void *arg);
  *
  * @param arg Released button number, given as pointer to uint8_t
  */
-void chord_release(void *arg);
+void playback_button_release(void *arg);
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * 4chord midi - Chord playback
+ * 4chord midi - MIDI playback
  *
  * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
  *
@@ -86,7 +86,7 @@ construct_chord(uint8_t chord_num)
  * @param arg Pressed button number, given as pointer to uint8_t
  */
 void
-chord_press(void *arg)
+playback_button_press(void *arg)
 {
     uint8_t chord_num = *((uint8_t *) arg);
 
@@ -107,7 +107,7 @@ chord_press(void *arg)
  * @param arg Released button number, given as pointer to uint8_t (unused)
  */
 void
-chord_release(void *arg __attribute__((unused)))
+playback_button_release(void *arg __attribute__((unused)))
 {
     midi_msg_note_off(chord.root, VELOCITY);
     midi_msg_note_off(chord.third, VELOCITY);

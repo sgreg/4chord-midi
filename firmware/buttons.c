@@ -19,8 +19,8 @@
 #include <stdio.h>
 #include <avr/io.h>
 #include "buttons.h"
-#include "chords.h"
 #include "menu.h"
+#include "playback.h"
 
 
 /* internal button states */
@@ -86,32 +86,32 @@ static struct button_handler button_handlers[BUTTON_MAX] = {
     {   /* BUTTON_CHORD_1 */
         .oneshot = 0,
         .callbacks = {
-            chord_release,
-            chord_press,
+            playback_button_release,
+            playback_button_press,
         },
         .callback_arg = (uint8_t *) 0
     },
     {   /* BUTTON_CHORD_2 */
         .oneshot = 0,
         .callbacks = {
-            chord_release,
-            chord_press,
+            playback_button_release,
+            playback_button_press,
         },
         .callback_arg = (uint8_t *) 1
     },
     {   /* BUTTON_CHORD_3 */
         .oneshot = 0,
         .callbacks = {
-            chord_release,
-            chord_press,
+            playback_button_release,
+            playback_button_press,
         },
         .callback_arg = (uint8_t *) 2
     },
     {   /* BUTTON_CHORD_4 */
         .oneshot = 0,
         .callbacks = {
-            chord_release,
-            chord_press,
+            playback_button_release,
+            playback_button_press,
         },
         .callback_arg = (uint8_t *) 3
     }
