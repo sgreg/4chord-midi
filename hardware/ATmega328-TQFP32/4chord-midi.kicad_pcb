@@ -1,11 +1,11 @@
-(kicad_pcb (version 4) (host pcbnew 4.0.1-2.201512121406+6195~38~ubuntu14.04.1-stable)
+(kicad_pcb (version 4) (host pcbnew 4.0.1-3.201512161002+6197~38~ubuntu14.04.1-stable)
 
   (general
     (links 125)
     (no_connects 0)
     (area 103.524999 32.385 189.42262 89.055001)
     (thickness 1.6)
-    (drawings 41)
+    (drawings 42)
     (tracks 558)
     (zones 0)
     (modules 60)
@@ -64,7 +64,7 @@
     (aux_axis_origin 0 0)
     (visible_elements FFFFFF7F)
     (pcbplotparams
-      (layerselection 0x030f0_80000001)
+      (layerselection 0x010f0_80000001)
       (usegerberextensions false)
       (excludeedgelayer true)
       (linewidth 0.100000)
@@ -2435,6 +2435,9 @@
       (xy -0.614942 2.889672) (xy -0.522655 3.382412) (xy 0.548183 3.382412) (xy 0.64047 2.889672)) (layer B.Mask) (width 0.002))
   )
 
+  (gr_text "Licensed under CERN OHL v.1.2" (at 136.6 87.2) (layer B.SilkS)
+    (effects (font (size 0.5 0.5) (thickness 0.1)) (justify mirror))
+  )
   (gr_line (start 186 35) (end 106.81 35) (layer Edge.Cuts) (width 0.15))
   (gr_text 12/2015 (at 152.3 86.2) (layer B.SilkS)
     (effects (font (size 0.5 0.5) (thickness 0.1)) (justify mirror))
