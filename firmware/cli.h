@@ -1,5 +1,5 @@
 /*
- * 4chord midi - board configuration settings
+ * 4chord midi - UART command line interface
  *
  * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
  *
@@ -16,25 +16,17 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
-#include <avr/io.h>
+#ifndef _CLI_H_
+#define _CLI_H_
 
-#define FOURCHORD_MIDI_VERSION "0.9"
+/**
+ * Print the command line interface to UART
+ */
+void cli_print(void);
 
-/* SPI chip select port name */
-#define SPI_CS_PORT PORTB
-/* SPI chip select pin number */
-#define SPI_CS_PIN  PB2
-
-/* SPI data/command port name */
-#define SPI_DC_PORT PORTB
-/* SPI data/command pin number */
-#define SPI_DC_PIN  PB1
-
-/* LCD reset port name */
-#define LCD_RESET_PORT  PORTB
-/* LCD reset pin number */
-#define LCD_RESET_PIN   PB0
+/**
+ * Poll command line interface for input from UART and handle it.
+ */
+void cli_poll(void);
 
 #endif

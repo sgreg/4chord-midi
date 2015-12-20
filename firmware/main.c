@@ -51,24 +51,14 @@
  */
 #include <avr/interrupt.h>
 #include <avr/io.h>
-#include <avr/pgmspace.h>
 #include <util/delay.h>
-#include "lcd3310.h"
 #include "buttons.h"
-#include "playback.h"
+#include "cli.h"
+#include "lcd3310.h"
 #include "gui.h"
+#include "playback.h"
 #include "uart.h"
 #include "usbdrv/usbdrv.h"
-
-const char uart_banner[] PROGMEM =
-"\f\r\n\
-         ___      _                   _ \r\n\
-        /   |    | |                 | |       _________   _   ______   _\r\n\
-       / /| | ___| |__   ___  _ __ __| |      |  _   _  \\ | | |____  \\ | |\r\n\
-      / /_| |/ __| '_ \\ / _ \\| '__/ _` |      | | | | | | | |  _   | | | |\r\n\
-      \\___  | (__| | | | (_) | | | (_| |      | | | | | | | | | |__| | | |\r\n\
-          |_/\\___|_| |_|\\___/|_|  \\__,_|      |_| |_| |_| |_| |______/ |_|\r\n\
-\r\n";
 
 int
 main(void) {
@@ -88,7 +78,7 @@ main(void) {
     PORTD = ~((1 << PD1) | (1 << PD2) | (1 << PD3) | (1 << PD4));
 
     uart_init(UART_BRATE_38400_16MHZ);
-    uart_print_pgm(uart_banner);
+    cli_print();
 
     lcd_init();
     gui_printlogo();
@@ -123,6 +113,7 @@ main(void) {
         usbPoll();
         button_input_loop();
         playback_poll();
+        cli_poll();
     }
 }
 
