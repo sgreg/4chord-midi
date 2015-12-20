@@ -44,10 +44,11 @@ static const unsigned char *tempo_digits[] = {
 
 /* graphics data array for modes */
 static const unsigned char *modes[] = {
-    gfx_mode_0,
-    gfx_mode_1,
-    gfx_mode_2,
-    gfx_mode_3
+    gfx_mode_chord,
+    gfx_mode_chord_arp,
+    gfx_mode_chord_arp_oct,
+    gfx_mode_arp,
+    gfx_mode_arp_oct
 };
 
 /* graphics data array for key chords and modifiers */

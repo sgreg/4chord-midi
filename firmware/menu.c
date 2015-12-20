@@ -32,9 +32,9 @@ static playback_mode_item_t playback_mode_current;
 /* currently selected chord */
 static playback_key_item_t playback_key_current;
 
-#define PLAYBACK_TEMPO_MIN 40
+#define PLAYBACK_TEMPO_MIN 30
 #define PLAYBACK_TEMPO_DEFAULT 120
-#define PLAYBACK_TEMPO_MAX 180
+#define PLAYBACK_TEMPO_MAX 240
 
 /**
  * Select next menu item and update the LCD.

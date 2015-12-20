@@ -1,5 +1,5 @@
 /*
- * 4chord midi - Chord playback
+ * 4chord midi - UART command line interface
  *
  * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
  *
@@ -16,25 +16,17 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#ifndef _CHORDS_H_
-#define _CHORDS_H_
+#ifndef _CLI_H_
+#define _CLI_H_
 
 /**
- * Button press callback function.
- * Called when one of the four chord buttons is pressed. The pressed chord
- * button number is given in the arg parameter.
- *
- * @param arg Pressed button number, given as pointer to uint8_t
+ * Print the command line interface to UART
  */
-void chord_press(void *arg);
+void cli_print(void);
 
 /**
- * Button release callback function.
- * Called when one of the four chord buttons is released. The released chord
- * button number is given in the arg parameter.
- *
- * @param arg Released button number, given as pointer to uint8_t
+ * Poll command line interface for input from UART and handle it.
  */
-void chord_release(void *arg);
+void cli_poll(void);
 
 #endif

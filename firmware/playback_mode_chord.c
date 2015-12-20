@@ -1,5 +1,5 @@
 /*
- * 4chord midi - board configuration settings
+ * 4chord midi - Playback mode "Arpeggio"
  *
  * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
  *
@@ -16,25 +16,32 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
-#include <avr/io.h>
+#include <stdio.h>
+#include "playback.h"
 
-#define FOURCHORD_MIDI_VERSION "0.9"
+playback_mode_t playback_mode_chord;
 
-/* SPI chip select port name */
-#define SPI_CS_PORT PORTB
-/* SPI chip select pin number */
-#define SPI_CS_PIN  PB2
+void
+playback_mode_chord_start(chord_t *chord)
+{
+    play_start_note(chord->root);
+    play_start_note(chord->third);
+    play_start_note(chord->fifth);
+    play_start_note(chord->octave);
+}
 
-/* SPI data/command port name */
-#define SPI_DC_PORT PORTB
-/* SPI data/command pin number */
-#define SPI_DC_PIN  PB1
+void
+playback_mode_chord_stop(chord_t *chord)
+{
+    play_stop_note(chord->root);
+    play_stop_note(chord->third);
+    play_stop_note(chord->fifth);
+    play_stop_note(chord->octave);
+}
 
-/* LCD reset port name */
-#define LCD_RESET_PORT  PORTB
-/* LCD reset pin number */
-#define LCD_RESET_PIN   PB0
+playback_mode_t playback_mode_chord = {
+    .start = playback_mode_chord_start,
+    .cycle = NULL,
+    .stop = playback_mode_chord_stop
+};
 
-#endif

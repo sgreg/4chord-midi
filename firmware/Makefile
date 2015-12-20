@@ -19,8 +19,9 @@
 MCU = atmega328p
 F_CPU = 16000000
 
-OBJS = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o menu.o chords.o usb.o
+OBJS  = main.o graphics.o spi.o uart.o lcd3310.o buttons.o gui.o menu.o playback.o usb.o timer.o cli.o
 OBJS += usbdrv/usbdrv.o usbdrv/usbdrvasm.o
+OBJS += playback_mode_chord.o playback_mode_chord_arpeggio.o playback_mode_chord_arpeggio_octave.o playback_mode_arpeggio.o playback_mode_arpeggio_octave.o
 
 
 # Fuses
@@ -53,6 +54,8 @@ LDFLAGS = -Wl,-Map=$(<:.o=.map),--cref
 AVRDUDE = avrdude
 AVRDUDE_FLAGS = -p $(MCU) -c usbasp
 
+BUILD_DATE = $(shell /bin/date +%Y%m%d-%H%M%S)
+BUILD_DATE_DEFINE = -DBUILD_DATE_STRING="\"$(BUILD_DATE)\""
 
 .PRECIOUS : %.elf %.o
 
@@ -65,8 +68,11 @@ all: 4chordmidi.hex
 4chordmidi.elf: $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-%.o: %.c
+cli.o: cli.c
 	$(CC) -c $(CFLAGS) $(ASFLAGS) $(BUILD_DATE_DEFINE) $< -o $@
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $(ASFLAGS) $< -o $@
 
 %.o: %.S
 	$(CC) -c $(CFLAGS) -x assembler-with-cpp $(ASFLAGS_ASM) $< -o $@
