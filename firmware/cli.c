@@ -127,9 +127,6 @@ cli_poll(void)
             case 'd':
                 menu_button_next(NULL);
                 break;
-            case 'i':
-                cli_print_menu_info();
-                break;
             case 'h':
                 uart_print_pgm(cli_help);
                 break;
