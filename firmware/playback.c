@@ -103,10 +103,10 @@ construct_chord(uint8_t chord_num)
 static uint16_t
 playback_interval(void)
 {
-    uint8_t tempo = menu_get_current_playback_tempo();
-    /* TODO find alternative option, floating point op is very expensive */
-    float cycle = 60.0 / tempo;
-    uint16_t interval = (uint16_t) (TICKS_PER_CYCLE * cycle);
+    uint8_t  tempo    = menu_get_current_playback_tempo();
+    uint32_t minute   = TICKS_PER_CYCLE * 60;
+    uint16_t interval = minute / tempo;
+
     return interval;
 }
 
