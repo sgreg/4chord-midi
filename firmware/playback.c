@@ -59,13 +59,15 @@ extern playback_mode_t playback_mode_chord;
 extern playback_mode_t playback_mode_chord_arpeggio;
 extern playback_mode_t playback_mode_chord_arpeggio_octave;
 extern playback_mode_t playback_mode_arpeggio;
+extern playback_mode_t playback_mode_arpeggio_octave;
 
 /* array of available playback mode structures */
 static playback_mode_t *playback_modes[PLAYBACK_MODE_MAX] = {
     &playback_mode_chord,
     &playback_mode_chord_arpeggio,
     &playback_mode_chord_arpeggio_octave,
-    &playback_mode_arpeggio
+    &playback_mode_arpeggio,
+    &playback_mode_arpeggio_octave
 };
 
 /* pointer to currently active playback mode, set in button press handler */
