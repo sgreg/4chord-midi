@@ -20,7 +20,7 @@
 #define _CONFIG_H_
 #include <avr/io.h>
 
-#define FOURCHORD_MIDI_VERSION "0.9"
+#define FOURCHORD_MIDI_VERSION "1.0"
 
 /* SPI chip select port name */
 #define SPI_CS_PORT PORTB
