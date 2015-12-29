@@ -74,7 +74,7 @@ For Ubuntu, the required packages are `alsa-tools fluidsynth fluidsynth-soundfon
 First, start fluidsynth as server in one terminal:
 
 ```
-$ fluidsynth -a alsa -m alsa_seq -s -g 1.0 /usr/share/sounds/sf2/FluidR3_GM.sfs
+$ fluidsynth -a alsa -m alsa_seq -s -g 1.0 /usr/share/sounds/sf2/FluidR3_GM.sf2
 ```
 If it complains about the soundfont path, check where they are installed to and adjust the path.
 
@@ -90,7 +90,7 @@ client 129: 'FLUID Synth (32590)' [type=user]
     0 'Synth input port (32590:0)'
 ```
 
-This tells us MIDI input is port `20:0` and midi output is port `129:0`. Now we connect them.
+This tells us MIDI input is port `20:0` and MIDI output is port `129:0`. Now we connect them.
 
 ```
 $ aconnect 20:0 129:0
