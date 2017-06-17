@@ -1,4 +1,4 @@
-##4chord MIDI - The Four Chord USB MIDI Keyboard
+## 4chord MIDI - The Four Chord USB MIDI Keyboard
 
 As we know latest since [The Axis of Awesome](https://en.wikipedia.org/wiki/The_Axis_of_Awesome), all it takes to make a hit song is [4 chords](https://www.youtube.com/watch?v=5pidokakU4I).
 This project implements a USB MIDI device exactly for that purpose.
@@ -9,10 +9,15 @@ Additionally, the tempo of each note progression is selectable from 30bpm to 240
 
 4chord MIDI is fully open. The hardware is licensed under the [CERN Open Hardware License v.1.2](http://www.ohwr.org/projects/cernohl/wiki) and the software is released under the [GNU General Public License version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
 
+See also [the 4chord MIDI project website](http://sgreg.fi/projects/4chord-midi) with few more details and pictures.
+
+
 ### Status
 
 4chord MIDI includes custom hardware and firmware built around an [ATmega328P](http://www.atmel.com/devices/atmega328p.aspx) microcontroller and the [V-USB](https://www.obdev.at/products/vusb/index.html) library.
 As of December 2015, hardware revision A is ready and the first PCB is in production at [OSH Park](https://oshpark.com/) and awaiting delivery and verification; firmware version 1.0 is fully implemented and freshly published (and a list of new features already in the mental queue for version 2.0)
+
+As of June 2017, development is continued by (finally) designing hardware Revision B to tackle the shortcomings of Revision A (LCD and out-of-spec clock speed), and design a whole new PCB along the way.
 
 
 ### Features
@@ -27,7 +32,6 @@ As of December 2015, hardware revision A is ready and the first PCB is in produc
 * UART interface
 * 10-pin ISP interface
 
-Once the current hardware design has been verified (delivery probably not before mid January), the PCB will be shared on OSH Park.
 
 ##### Firmware Version 1.0
 * MIDI message handling for note on/off commands for each playback key
