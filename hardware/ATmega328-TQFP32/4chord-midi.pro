@@ -1,4 +1,4 @@
-update=Wed 02 Dec 2015 11:27:46 PM EET
+update=Fri 16 Jun 2017 01:22:22 PM EEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -23,9 +23,11 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
+[general]
+version=1
 [eeschema]
 version=1
-LibDir=
+LibDir=/home/sven/work/kicad-libs
 [eeschema/libraries]
 LibName1=power
 LibName2=device
@@ -56,5 +58,4 @@ LibName26=opto
 LibName27=atmel
 LibName28=contrib
 LibName29=valves
-[general]
-version=1
+LibName30=components/Nokia_5110-3310_LCD/nokia_5110-3310_lcd
