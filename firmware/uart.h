@@ -1,7 +1,7 @@
 /*
  * 4chord midi - UART communication
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,13 +21,10 @@
 #include <stdint.h>
 
 /* baud rate values for U2Xn=0 */
-#define UART_BRATE_2400_8MHZ    207
-#define UART_BRATE_9600_8MHZ     51
-#define UART_BRATE_9600_16MHZ   103
-#define UART_BRATE_19200_8MHZ    25
-#define UART_BRATE_19200_16MHZ   51
-#define UART_BRATE_38400_8MHZ    12
-#define UART_BRATE_38400_16MHZ   25
+#define UART_BRATE_9600_12MHZ   77
+#define UART_BRATE_19200_12MHZ  38
+#define UART_BRATE_38400_12MHZ  19
+#define UART_BRATE_57600_12MHZ  12
 
 /**
  * Initialize UART with given baud rate value.

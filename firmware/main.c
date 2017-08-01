@@ -83,7 +83,7 @@ main(void) {
     /* set outputs high, enable pullups for all inputs except V-USB ones */
     PORTD = ~((1 << PD2) | (1 << PD6) | (1 << PD7)) & 0xff;
 
-    uart_init(UART_BRATE_38400_16MHZ);
+    uart_init(UART_BRATE_38400_12MHZ);
     cli_print();
 
     lcd_init();
