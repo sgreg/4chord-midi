@@ -1,4 +1,4 @@
-update=Fri 16 Jun 2017 01:22:22 PM EEST
+update=Tue 08 Aug 2017 08:17:27 PM EEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -59,3 +59,13 @@ LibName27=atmel
 LibName28=contrib
 LibName29=valves
 LibName30=components/Nokia_5110-3310_LCD/nokia_5110-3310_lcd
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
