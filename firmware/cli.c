@@ -56,7 +56,7 @@ static const char cli_about[] PROGMEM =
 http://4chord.craplab.fi\r\n\r\n\
 Copyright (C) 2017 Sven Gregori <sven@craplab.fi>\r\n\r\n\
 Firmware version:  " FOURCHORD_MIDI_VERSION " built " BUILD_DATE_STRING "\r\n\
-Hardware revision: B (07/2017)\r\n\r\n\
+Hardware revision: B (08-2017)\r\n\r\n\
 Firmware is licensed under the GNU General Public License version 2\r\n\
 Hardware is licensed under the CERN Open Hardware License version 1.2\r\n\
 USB connectivity implemented using Object Development's V-USB library\r\n\r\n\
