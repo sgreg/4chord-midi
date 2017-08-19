@@ -1,7 +1,7 @@
 /*
  * 4chord midi - Nokia 3310 LCD handling
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -149,7 +149,7 @@ lcd_init(void)
     spi_send_command(0xc8);
     spi_send_command(0x04 | !!(LCD_START_LINE_ADDR & (1u << 6)));
     spi_send_command(0x40 | (LCD_START_LINE_ADDR & ((1u << 6) -1)));
-    spi_send_command(0x14);
+    spi_send_command(0x12);
     spi_send_command(0x20);
     spi_send_command(0x08);
     spi_send_command(0x0c);

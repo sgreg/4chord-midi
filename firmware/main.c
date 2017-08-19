@@ -1,7 +1,7 @@
 /*
  * 4chord midi - main
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,37 +16,43 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  *
- * ATmega88 pin layout (PDIP)
+ * ATmega328 pin layout (TQFP32)
  *
- *   1  /Reset
- *   2  PD0     I   UART RXD
- *   3  PD1     O   UART TXD
- *   4  PD2     -   INT0 USB D+
- *   6  PD3     O   USB Reset
- *   5  PD4     -   USB D-
- *   7  VCC     -
- *   8  GND     -
- *   9  PB6     -   (XTAL1)
- *  10  PB7     -   (XTAL2)
- *  11  PD5     I   Button -
- *  12  PD6     I   Button Select
- *  13  PD7     I   Button + 
- *  14  PB0     O   LCD Reset
+ *   1  PD3     (unused)
+ *   2  PD4     I   Button menu prev
+ *   3  GND     -
+ *   4  VCC     -
+ *   5  GND     -
+ *   6  VCC     -
+ *   7  PB6     -   XTAL1
+ *   8  PB7     -   XTAL2
  *
- *  15  PB1     O   LCD D/C
- *  16  PB2     O   LCD /CS
- *  17  PB3     O   LCD MOSI / SerProg MOSI
- *  18  PB4     I   SerProg MISO
- *  19  PB5     O   LCD SCK / SerProg SCK
- *  20  AVCC    -
- *  21  AREF    -
- *  22  GND     -
- *  23  PC0     I   Button Chord I
- *  24  PC1     I   Button Chord V
- *  25  PC2     I   Button Chord vi
- *  26  PC3     I   Button Chord IV
- *  27  PC4     (unused)
- *  28  PC5     (unused)
+ *   9  PD5     O   LCD back light
+ *  10  PD6     I   USB D-
+ *  11  PD7     O   USB Reset
+ *  12  PB0     O   LCD /Reset
+ *  13  PB1     O   LCD D/C
+ *  14  PB2     O   LCD /CS
+ *  15  PB3     O   LCD MOSI / SerProg MOSI
+ *  16  PB4     I   SerProg MISO
+ *
+ *  17  PB5     O   LCD SCK / SerProg SCK
+ *  18  AVCC    -
+ *  19  ADC6    (unused)
+ *  20  AREF    -
+ *  21  GND     -
+ *  22  ADC7    (unused)
+ *  23  PC0     I   Button Chord IV
+ *  24  PC1     I   Button Chord vi
+ *
+ *  25  PC2     I   Button Chord V
+ *  26  PC3     I   Button Chord I
+ *  27  PC4     I   Button Menu Select
+ *  28  PC5     I   Button Menu Next
+ *  29  PC6     -   /Reset
+ *  30  PD0     I   UART RXD
+ *  31  PD1     O   UART TXD
+ *  32  PD2     I   USB D+
  *
  */
 #include <avr/interrupt.h>
@@ -72,12 +78,12 @@ main(void) {
     DDRC = 0x00;
     /* enable pullups for all inputs */
     PORTC = 0xff;
-    /* set PB1 as output, rest input. */
-    DDRD  = (1 << DDD1);
-    /* set PB1 high, enable pullups for all inputs except V-USB ones */
-    PORTD = ~((1 << PD1) | (1 << PD2) | (1 << PD3) | (1 << PD4));
+    /* set PD1 and PD5 as output, rest input. */
+    DDRD  = (1 << DDD1) | (1 << DDD5);
+    /* set outputs high, enable pullups for all inputs except V-USB ones */
+    PORTD = ~((1 << PD2) | (1 << PD6) | (1 << PD7)) & 0xff;
 
-    uart_init(UART_BRATE_38400_16MHZ);
+    uart_init(UART_BRATE_38400_12MHZ);
     cli_print();
 
     lcd_init();
@@ -98,13 +104,13 @@ main(void) {
     }
 
     /* map buttons to inputs */
-    button_map_port(BUTTON_MENU_PREV,   &PIND, 5);
-    button_map_port(BUTTON_MENU_SELECT, &PIND, 6);
-    button_map_port(BUTTON_MENU_NEXT,   &PIND, 7);
-    button_map_port(BUTTON_CHORD_1,     &PINC, 0);
-    button_map_port(BUTTON_CHORD_2,     &PINC, 1);
-    button_map_port(BUTTON_CHORD_3,     &PINC, 2);
-    button_map_port(BUTTON_CHORD_4,     &PINC, 3);
+    button_map_port(BUTTON_MENU_PREV,   &PIND, 4);
+    button_map_port(BUTTON_MENU_SELECT, &PINC, 5);
+    button_map_port(BUTTON_MENU_NEXT,   &PINC, 4);
+    button_map_port(BUTTON_CHORD_1,     &PINC, 3);
+    button_map_port(BUTTON_CHORD_2,     &PINC, 2);
+    button_map_port(BUTTON_CHORD_3,     &PINC, 1);
+    button_map_port(BUTTON_CHORD_4,     &PINC, 0);
     
     lcd_clear();
     menu_init();

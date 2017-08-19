@@ -1,7 +1,7 @@
 /*
  * 4chord midi - board configuration settings
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
 #define _CONFIG_H_
 #include <avr/io.h>
 
-#define FOURCHORD_MIDI_VERSION "1.0"
+#define FOURCHORD_MIDI_VERSION "1.1"
 
 /* SPI chip select port name */
 #define SPI_CS_PORT PORTB

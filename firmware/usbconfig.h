@@ -21,7 +21,7 @@
 /* This is the port where the USB bus is connected. When you configure it to
  * "B", the registers PORTB, PINB and DDRB will be used.
  */
-#define USB_CFG_DMINUS_BIT      4
+#define USB_CFG_DMINUS_BIT      6
 /* This is the bit number in USB_CFG_IOPORT where the USB D- line is connected.
  * This may be any bit in the port.
  */
@@ -58,7 +58,7 @@
  * the macros usbDeviceConnect() and usbDeviceDisconnect() (see usbdrv.h).
  * This constant defines the port on which the pullup resistor is connected.
  */
-#define USB_CFG_PULLUP_BIT          3
+#define USB_CFG_PULLUP_BIT          7
 /* This constant defines the bit number in USB_CFG_PULLUP_IOPORT (defined
  * above) where the 1.5k pullup resistor is connected. See description
  * above for details.
@@ -210,7 +210,7 @@
 
 /* -------------------------- Device Description --------------------------- */
 
-#define  USB_CFG_VENDOR_ID       0xc0, 0x16 /* = 0x16c0 = 5824 = voti.nl */
+#define  USB_CFG_VENDOR_ID      0x09, 0x12 /* = 0x1209 = pid.codes */
 /* USB vendor ID for the device, low byte first. If you have registered your
  * own Vendor ID, define it here. Otherwise you may use one of obdev's free
  * shared VID/PID pairs. Be sure to read USB-IDs-for-free.txt for rules!
@@ -219,7 +219,7 @@
  * with libusb: 0x16c0/0x5dc.  Use this VID/PID pair ONLY if you understand
  * the implications!
  */
-#define  USB_CFG_DEVICE_ID       0xe4, 0x05 /* = 0x05e4 = 1508, obdev MIDI */
+#define  USB_CFG_DEVICE_ID      0xaf, 0xde /* = 0xdeaf = CrapLab 4chord MIDI */
 /* This is the ID of the product, low byte first. It is interpreted in the
  * scope of the vendor ID. If you have registered your own VID with usb.org
  * or if you have licensed a PID from somebody else, define it here. Otherwise
@@ -233,8 +233,8 @@
 #define USB_CFG_DEVICE_VERSION  0x00, 0x01
 /* Version number of the device: Minor number first, then major number.
  */
-#define USB_CFG_VENDOR_NAME     'g', 'i', 't', 'h', 'u', 'b', '.', 'c', 'o', 'm', '/', 's', 'g', 'r', 'e', 'g'
-#define USB_CFG_VENDOR_NAME_LEN 16
+#define USB_CFG_VENDOR_NAME     'C', 'r', 'a', 'p', 'L', 'a', 'b'
+#define USB_CFG_VENDOR_NAME_LEN 7
 /* These two values define the vendor name returned by the USB device. The name
  * must be given as a list of characters under single quotes. The characters
  * are interpreted as Unicode (UTF-16) entities.
