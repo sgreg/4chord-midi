@@ -9,36 +9,35 @@ Additionally, the tempo of each note progression is selectable from 30bpm to 240
 
 4chord MIDI is fully open. The hardware is licensed under the [CERN Open Hardware License v.1.2](http://www.ohwr.org/projects/cernohl/wiki) and the software is released under the [GNU General Public License version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
 
-See also [the 4chord MIDI project website](http://sgreg.fi/projects/4chord-midi) with few more details and pictures.
+See also [the 4chord MIDI project website](http://sgreg.fi/projects/4chord-midi) and [its hackaday.io project page](https://hackaday.io/project/26078-4chord-midi) for more details, prpgress information, pictures and everything else there is.
 
 
 ### Status
 
 4chord MIDI includes custom hardware and firmware built around an [ATmega328P](http://www.atmel.com/devices/atmega328p.aspx) microcontroller and the [V-USB](https://www.obdev.at/products/vusb/index.html) library.
-As of December 2015, hardware revision A is ready and the first PCB is in production at [OSH Park](https://oshpark.com/) and awaiting delivery and verification; firmware version 1.0 is fully implemented and freshly published (and a list of new features already in the mental queue for version 2.0)
-
-As of June 2017, development is continued by (finally) designing hardware Revision B to tackle the shortcomings of Revision A (LCD and out-of-spec clock speed), and design a whole new PCB along the way.
+The first hardware revision A was created back in December 2015 as a simple, credit card sized PCB. In June 2017 the PCB was fully re-designed and shaped into a Piano, with Revision B officially finalized in August 2017 ([Release](https://github.com/sgreg/4chord-midi/releases/tag/v1.1-B)) and the PCB design [shared on OSH Park](https://oshpark.com/projects/GbBggrq3).
 
 
 ### Features
 
-##### Hardware Revision A
-* Credit card sized PCB layout
-* ATmega328P TQFP32 microcontroller running at 16MHz
-* Nokia 3310 LCD with backlight connected via SPI
-* USB powered
+##### Hardware Revision B
+* Piano shaped PCB layout
+* ATmega328P TQFP32 microcontroller running at 12MHz
+* Nokia 5110 clip-in LCD with PWM controllable back light
+* USB powered with 3.3V main operating voltage
 * Three button menu interface
 * Four button chord playback
-* UART interface
-* 10-pin ISP interface
+* UART interface for debug and testing with selectable supply voltage
+* 6-pin ISP interface
 
 
-##### Firmware Version 1.0
+##### Firmware Version 1.1
 * MIDI message handling for note on/off commands for each playback key
 * Hardware timer based tempo handling for arpeggio and mixed mode playback
 * Graphical user interface to display current playback key, mode and tempo
 * UART command line interface to emulate button press (38400 8N1)
 * USB and MIDI message handling via V-USB
+* Dedicated USB VID/PID pair thanks to [pid.codes](http://pid.codes/)
 
 ##### Tools
 * XBM images to C char arrays conversion tool
@@ -47,28 +46,29 @@ As of June 2017, development is continued by (finally) designing hardware Revisi
 
 ### Usage
 
-First off, all I can tell about here refers to Linux. But since 4chord MIDI implements standard USB and MIDI specifications, other operating systems should treat it also as a normal MIDI device, so any general MIDI setup
-instructions should work just fine.
+First off, all I can tell about here refers to Linux. But since 4chord MIDI implements standard USB and MIDI specifications, other operating systems should treat it also as a normal MIDI device, so any general MIDI setup instructions should work just fine.
 
-I usually use [jack](http://www.jackaudio.org/) for audio routing and [Ardour](http://ardour.org/) for recording in general, and [a2jmidid](http://manual.ardour.org/setting-up-your-system/setting-up-midi/midi-on-linux/),
-[Calf plugins](http://calf-studio-gear.org/) and [Fluidsynth](http://www.fluidsynth.org/) sound fonts for MIDI in particular. I never used [Rosegarden](http://www.rosegardenmusic.com/), [MusE](http://muse-sequencer.org/)
-or anything alike, but then again, 4chord MIDI is a regular USB MIDI device, so it should work as any other MIDI controller.
+I usually use [jack](http://www.jackaudio.org/) for audio routing and [Ardour](http://ardour.org/) for recording in general, and [a2jmidid](http://manual.ardour.org/setting-up-your-system/setting-up-midi/midi-on-linux/), [Calf plugins](http://calf-studio-gear.org/) and [Fluidsynth](http://www.fluidsynth.org/) sound fonts for MIDI in particular. I never used [Rosegarden](http://www.rosegardenmusic.com/), [MusE](http://muse-sequencer.org/) or anything alike, but then again, 4chord MIDI is a regular USB MIDI device, so it should work as any other MIDI controller.
 
 ##### Plug it in
 
 Connect 4chord MIDI to your computer and check if it got recognized. Since it uses the V-USB library for USB handling, `dmesg` should show something like this:
 ```
 [3038097.883853] usb 1-1.1.1: new low-speed USB device number 112 using ehci-pci
-[3038099.140623] usb 1-1.1.1: New USB device found, idVendor=16c0, idProduct=05e4
+[3038099.140623] usb 1-1.1.1: New USB device found, idVendor=1209, idProduct=deaf
 [3038099.140626] usb 1-1.1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=0
 [3038099.140627] usb 1-1.1.1: Product: 4chord MIDI
-[3038099.140628] usb 1-1.1.1: Manufacturer: github.com/sgreg
+[3038099.140628] usb 1-1.1.1: Manufacturer: CrapLab
 ```
 and `lsusb` should show something like this:
 ```
-Bus 001 Device 112: ID 16c0:05e4 Van Ooijen Technische Informatica Free shared USB VID/PID pair for MIDI devices
+Bus 001 Device 112: ID 1209:deaf InterBiometrics CrapLab 4chord MIDI
 ```
-The VID/PID pair (`16c0:05e4`) should be the same, the Device number is most likely different.
+or, more likely, simply
+```
+Bus 001 Device 112: ID 1209:deaf InterBiometrics CrapLab 4chord MIDI
+```
+Of course, the bus and device number will most certainly differ, but as long as the VID/PID pair (`1209:deaf`) is the same, it's all good.
 
 ##### Simple playback
 
@@ -100,10 +100,8 @@ This tells us MIDI input is port `20:0` and MIDI output is port `129:0`. Now we 
 $ aconnect 20:0 129:0
 ```
 
-That's it.
+That's it. You should hear now a piano sound when pressing any of the four chord buttons.
 
-In theory, you should hear now a piano sound when pressing any of the four chord buttons.
 
-**Note:** while testing this, I did encounter some noise (and once what sounded more like a dead robot than a piano). It's possible some ALSA tweaking can take care of that, but anyway, I highly recommend to have a look into
-[jack](http://www.jackaudio.org/) if you're serious about making music in Linux.
+**Note:** while testing this, I did encounter some noise (and once what sounded more like a dead robot than a piano). It's possible some ALSA tweaking can take care of that, but anyway, I highly recommend to have a look into [jack](http://www.jackaudio.org/) if you're serious about making music in Linux.
 
