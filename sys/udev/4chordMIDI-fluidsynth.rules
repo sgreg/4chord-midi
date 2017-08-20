@@ -1,0 +1,9 @@
+# 4chord MIDI - automatic fluidsynth setup udev rule
+# Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+#
+
+# 4chord MIDI device plugged in
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="deaf", RUN+="/bin/su - @USER@ -c '@SCRIPT@ start'"
+
+# 4chord MIDI device unplugged
+SUBSYSTEM=="usb", ACTION=="remove", ENV{ID_MODEL}=="4chord_MIDI", RUN+="/bin/su - @USER@ -c '@SCRIPT@ stop'"
