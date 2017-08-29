@@ -66,7 +66,7 @@ Bus 001 Device 112: ID 1209:deaf InterBiometrics CrapLab 4chord MIDI
 ```
 or, more likely, simply
 ```
-Bus 001 Device 112: ID 1209:deaf InterBiometrics CrapLab 4chord MIDI
+Bus 001 Device 112: ID 1209:deaf InterBiometrics
 ```
 Of course, the bus and device number will most certainly differ, but as long as the VID/PID pair (`1209:deaf`) is the same, it's all good.
 
