@@ -36,7 +36,7 @@ $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
 Title "4chord MIDI ATmega328-TQFP32"
-Date "2017-08-05"
+Date "2017-09-12"
 Rev "B"
 Comp "Sven Gregori <sven@craplab.fi>"
 Comment1 ""
@@ -1201,9 +1201,6 @@ F 3 "" H 7750 3150 50  0000 C CNN
 	1    7750 3150
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	2050 1100 2050 1500
-Connection ~ 2050 1200
 Connection ~ 1050 2900
 Wire Wire Line
 	1050 3000 1050 2900
@@ -1342,9 +1339,7 @@ Wire Wire Line
 Wire Wire Line
 	1900 1350 2150 1350
 Wire Wire Line
-	1900 1200 1900 1550
-Wire Wire Line
-	2050 1200 2150 1200
+	1300 1200 2150 1200
 Connection ~ 1650 7100
 Connection ~ 1650 7200
 Wire Wire Line
@@ -1641,7 +1636,10 @@ Connection ~ 900  1600
 Wire Wire Line
 	900  1600 1000 1600
 Wire Wire Line
-	1300 1100 2050 1100
+	2050 1500 2050 1200
+Connection ~ 2050 1200
 Wire Wire Line
-	1300 1200 1900 1200
+	1300 1100 1900 1100
+Wire Wire Line
+	1900 1100 1900 1550
 $EndSCHEMATC
