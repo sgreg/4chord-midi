@@ -1,9 +1,15 @@
 **/.*.swp
+bootloader/**/*.o
+bootloader/**/*.lst
+bootloader/**/*.map
+bootloader/**/*.elf
+bootloader/**/*.hex
 firmware/**/*.o
 firmware/**/*.lst
 firmware/**/*.map
 firmware/**/*.elf
 firmware/**/*.hex
+firmware/**/*.bin
 tools/atmega328p_fuse_dump
 hardware/**/*.bak
 hardware/**/*.kicad_pcb-bak

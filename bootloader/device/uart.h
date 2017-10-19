@@ -1,0 +1,77 @@
+/*
+ * 4chord MIDI bootloader - UART communication
+ *
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ *
+ * This program is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/
+ *
+ */
+#ifndef _UART_H_
+#define _UART_H_
+#include <stdint.h>
+
+/* baud rate values for U2Xn=0 */
+#define UART_BRATE_9600_12MHZ   77
+#define UART_BRATE_19200_12MHZ  38
+#define UART_BRATE_38400_12MHZ  19
+#define UART_BRATE_57600_12MHZ  12
+
+/**
+ * Initialize UART with given baud rate value.
+ * See list of UART_BRATE_* defines for some predefined baud rate values.
+ *
+ * @param brate UART baud rate
+ */
+void uart_init(int16_t brate);
+
+/**
+ * Transmit a single character via UART.
+ * @param data Character to write
+ */
+void uart_putchar(char data);
+
+/**
+ * Print a newline via UART.
+ */
+void uart_newline(void);
+
+/**
+ * Print a given string via UART.
+ * @param data String to print
+ */
+void uart_print(char *data);
+
+#ifdef DEBUG
+/**
+ * Print a given byte as hexadecimal value via UART.
+ * Note, only single bytes are printed, also no 0x suffix is output
+ * automatically, so add that if required manually.
+ *
+ * @param data Value to print as hexadecimal.
+ */
+void uart_puthex(char data);
+
+/**
+ * Print a given signed base 10 number via UART.
+ * A number of minumum digits can be specified. If the given number has
+ * less digits, the output is filled with leading zeros. If the number
+ * has more digits, all digits are printed.
+*
+ * @param number Number to be printed.
+ * @param digits Minimum number of digits to print.
+ */
+void uart_putint(int32_t number, int8_t digits);
+
+#endif /* DEBUG */
+
+#endif /* _UART_H_ */
