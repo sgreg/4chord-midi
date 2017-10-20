@@ -101,6 +101,9 @@ construct_chord(uint8_t chord_num)
 
 /**
  * Set up the timer value based on the current playback tempo.
+ * The actual playback will be based on 1/8 notes, but the interval is
+ * based on 1/4 notes (at least for now, as there's only 4/4 metre),
+ * so this will return half of the BPM interval.
  */
 static uint16_t
 playback_interval(void)
@@ -109,7 +112,7 @@ playback_interval(void)
     uint32_t minute   = TICKS_PER_CYCLE * 60;
     uint16_t interval = minute / tempo;
 
-    return interval;
+    return interval >> 1;
 }
 
 /**
@@ -119,7 +122,7 @@ playback_interval(void)
 static void
 playback_cycle_timer_callback(void)
 {
-    if (++playback_mode->count == 4) {
+    if (++playback_mode->count == 8) {
         playback_mode->count = 0;
     }
     playback_timer_triggered = 1;
