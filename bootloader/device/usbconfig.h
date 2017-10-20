@@ -225,7 +225,7 @@
  * with libusb: 0x16c0/0x5dc.  Use this VID/PID pair ONLY if you understand
  * the implications!
  */
-#define  USB_CFG_DEVICE_ID       0x0b, 0xb0 /* = 0xb00b = CrapLab RUDY */
+#define  USB_CFG_DEVICE_ID      0xaf, 0xde /* = 0xdeaf = CrapLab 4chord MIDI */
 /* This is the ID of the product, low byte first. It is interpreted in the
  * scope of the vendor ID. If you have registered your own VID with usb.org
  * or if you have licensed a PID from somebody else, define it here. Otherwise
@@ -249,8 +249,8 @@
  * obdev's free shared VID/PID pair. See the file USB-IDs-for-free.txt for
  * details.
  */
-#define USB_CFG_DEVICE_NAME     'b', '0', '0', 'b', 'l', 'o', 'a', 'd', 'e', 'r'
-#define USB_CFG_DEVICE_NAME_LEN 10
+#define USB_CFG_DEVICE_NAME     '4', 'c', 'h', 'o', 'r', 'd', ' ', 'M', 'I', 'D', 'I', ' ', 'B', 'o', 'o', 't', 'l', 'o', 'a', 'd', 'e', 'r'
+#define USB_CFG_DEVICE_NAME_LEN 22
 /* Same as above for the device name. If you don't want a device name, undefine
  * the macros. See the file USB-IDs-for-free.txt before you assign a name if
  * you use a shared VID/PID.
@@ -380,9 +380,5 @@
 /* #define USB_INTR_PENDING        GIFR */
 /* #define USB_INTR_PENDING_BIT    INTF0 */
 /* #define USB_INTR_VECTOR         INT0_vect */
-
-#ifdef HAS_CONFIG_OVERRIDES
-#include "usbconfig_overrides.h"
-#endif
 
 #endif /* __usbconfig_h_included__ */
