@@ -1,5 +1,5 @@
 /*
- * 4chord MIDI - Playback mode "Arpeggio"
+ * 4chord MIDI bootloader - SPI master communication for Nokia LCD
  *
  * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
@@ -16,32 +16,25 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#include <stdio.h>
-#include "playback.h"
+#ifndef _SPI_H_
+#define _SPI_H_
+#include <stdint.h>
 
-playback_mode_t playback_mode_chord;
+/**
+ * Initialize SPI master.
+ */
+void spi_init(void);
 
-void
-playback_mode_chord_start(chord_t *chord)
-{
-    play_start_note(chord->root);
-    play_start_note(chord->third);
-    play_start_note(chord->fifth);
-    play_start_note(chord->octave);
-}
+/**
+ * Send SPI command.
+ * @param command Command to send via SPI
+ */
+void spi_send_command(uint8_t command);
 
-void
-playback_mode_chord_stop(chord_t *chord)
-{
-    play_stop_note(chord->root);
-    play_stop_note(chord->third);
-    play_stop_note(chord->fifth);
-    play_stop_note(chord->octave);
-}
+/**
+ * Send SPI data.
+ * @param data Data to send via SPI
+ */
+void spi_send_data(uint8_t data);
 
-playback_mode_t playback_mode_chord = {
-    .start = playback_mode_chord_start,
-    .cycle = NULL,
-    .stop = playback_mode_chord_stop
-};
-
+#endif

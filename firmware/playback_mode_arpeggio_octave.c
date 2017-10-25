@@ -1,7 +1,7 @@
 /*
- * 4chord midi - Playback mode "Arpeggio Octave"
+ * 4chord MIDI - Playback mode "Arpeggio Octave"
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,18 +25,22 @@ playback_mode_arpeggio_octave_cycle(chord_t *chord)
 {
     switch (playback_mode_arpeggio_octave.count) {
         case 0:
+        case 4:
             play_stop_note(chord->octave);
             play_start_note(chord->root);
             break;
         case 1:
+        case 5:
             play_stop_note(chord->root);
             play_start_note(chord->third);
             break;
         case 2:
+        case 6:
             play_stop_note(chord->third);
             play_start_note(chord->fifth);
             break;
         case 3:
+        case 7:
             play_stop_note(chord->fifth);
             play_start_note(chord->octave);
             break;

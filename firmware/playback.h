@@ -1,7 +1,7 @@
 /*
- * 4chord midi - MIDI playback
+ * 4chord MIDI - MIDI playback
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

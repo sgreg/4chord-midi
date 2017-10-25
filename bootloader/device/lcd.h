@@ -1,5 +1,5 @@
 /*
- * 4chord MIDI - Playback mode "Arpeggio"
+ * 4chord MIDI bootloader - Nokia LCD handling
  *
  * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
@@ -16,32 +16,13 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#include <stdio.h>
-#include "playback.h"
+#ifndef _LCD_H_
+#define _LCD_H_
 
-playback_mode_t playback_mode_chord;
+#define LCD_X_RES   84
+#define LCD_Y_RES   48
 
-void
-playback_mode_chord_start(chord_t *chord)
-{
-    play_start_note(chord->root);
-    play_start_note(chord->third);
-    play_start_note(chord->fifth);
-    play_start_note(chord->octave);
-}
+void lcd_init(void);
+void lcd_fullscreen(const uint8_t data[]);
 
-void
-playback_mode_chord_stop(chord_t *chord)
-{
-    play_stop_note(chord->root);
-    play_stop_note(chord->third);
-    play_stop_note(chord->fifth);
-    play_stop_note(chord->octave);
-}
-
-playback_mode_t playback_mode_chord = {
-    .start = playback_mode_chord_start,
-    .cycle = NULL,
-    .stop = playback_mode_chord_stop
-};
-
+#endif

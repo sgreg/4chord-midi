@@ -1,7 +1,7 @@
 /*
- * 4chord midi - Playback mode "Chord Arpeggio"
+ * 4chord MIDI - Playback mode "Chord Arpeggio"
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,17 +25,23 @@ playback_mode_chord_arpeggio_cycle(chord_t *chord)
 {
     switch (playback_mode_chord_arpeggio.count) {
         case 0:
-            play_start_note(chord->root);
             play_start_note(chord->third);
             play_start_note(chord->fifth);
+            play_start_note(chord->octave);
+            /* fall through */
+        case 4:
+            play_start_note(chord->root);
             break;
         case 1:
+        case 5:
             play_start_note(chord->third);
             break;
         case 2:
+        case 6:
             play_start_note(chord->fifth);
             break;
         case 3:
+        case 7:
             play_start_note(chord->third);
             break;
     }
@@ -47,6 +53,7 @@ playback_mode_chord_arpeggio_stop(chord_t *chord)
     play_stop_note(chord->root);
     play_stop_note(chord->third);
     play_stop_note(chord->fifth);
+    play_stop_note(chord->octave);
 }
 
 playback_mode_t playback_mode_chord_arpeggio = {
