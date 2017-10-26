@@ -1,7 +1,7 @@
 /*
- * 4chord midi - LCD graphical user interface
+ * 4chord MIDI - LCD graphical user interface
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,12 +18,9 @@
  */
 #ifndef _GUI_H_
 #define _GUI_H_
-#include "menu.h"
 
-/**
- * Print the startup logo on the display
- */
-void gui_printlogo(void);
+#include <stdint.h>
+#include "menu.h"
 
 /**
  * Write the given menu item graphic and update the LCD.

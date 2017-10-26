@@ -1,5 +1,5 @@
 /*
- * 4chord midi - UART command line interface
+ * 4chord MIDI - UART command line interface
  *
  * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
@@ -17,6 +17,7 @@
  *
  */
 #include <stdio.h>
+#include <stdint.h>
 #include <avr/pgmspace.h>
 #include "config.h"
 #include "menu.h"
@@ -42,9 +43,9 @@ static const char cli_help[] PROGMEM =
     [3]     Play chord vi\r\n\
     [4]     Play chord IV\r\n\
   [Space]   Stop playback\r\n\
-    [-]     Menu previous\r\n\
+    [<]     Menu previous\r\n\
   [Enter]   Menu Select\r\n\
-    [+]     Menu next\r\n\
+    [>]     Menu next\r\n\
     [h]     Print this help\r\n\
     [?]     About 4chord MIDI\r\n\
 ";
@@ -116,6 +117,7 @@ cli_poll(void)
                 playback_button_release(NULL);
                 break;
             case '-':
+            case '<':
             case 'a':
                 menu_button_prev(NULL);
                 break;
@@ -124,6 +126,7 @@ cli_poll(void)
                 menu_button_select(NULL);
                 break;
             case '+':
+            case '>':
             case 'd':
                 menu_button_next(NULL);
                 break;

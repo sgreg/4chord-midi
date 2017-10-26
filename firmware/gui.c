@@ -1,7 +1,7 @@
 /*
- * 4chord midi - LCD graphical user interface
+ * 4chord MIDI - LCD graphical user interface
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
  */
 #include <stdint.h>
 #include "graphics.h"
-#include "lcd3310.h"
+#include "lcd.h"
 #include "menu.h"
 
 /* graphics data array for menus */
@@ -67,51 +67,38 @@ static const unsigned char *chords[][2] = {
     {gfx_key_b, gfx_key_none},
 };
 
-
 /**
- * Print the startup logo on the display
- */
-void
-gui_printlogo(void)
-{
-    lcd_fullscreen(gfx_logo);
-}
-
-/**
- * Write the given menu item graphic and update the LCD.
+ * Display the given menu item graphic on the LCD.
  * @param Menu item index in accordance with menu.h values
  */
 void
 gui_set_menu(menu_item_t item)
 {
     lcd_set_menu(menus[item]);
-    lcd_update();
 }
 
 /**
- * Write the given playback mode item graphic and update the LCD
+ * Display the given playback mode item graphic on the LCD.
  * @param Playback mode item index in accordance with menu.h values
  */
 void
 gui_set_playback_mode(playback_mode_item_t item)
 {
     lcd_set_mode(modes[item]);
-    lcd_update();
 }
 
 /**
- * Write the given playback key item graphic and update the LCD
+ * Display the given playback key item graphic on the LCD.
  * @param Playback key item index in accordance with menu.h values
  */
 void
 gui_set_playback_key(playback_mode_item_t item)
 {
     lcd_set_chord(chords[item]);
-    lcd_update();
 }
 
 /**
- * Set tempo to given value and update the LCD.
+ * Display the given tempo value on the LCD.
  * Takes tempo as 8 bit integer (>255bpm won't be supported anyway) and
  * splits it in three single digits. The digits' representing graphics
  * are then transferred to the LCD's tempo area.
@@ -138,6 +125,5 @@ gui_set_playback_tempo(uint8_t tempo)
     digit_graphics[2] = tempo_digits[digits[2]];
 
     lcd_set_tempo(digit_graphics);
-    lcd_update();
 }
 

@@ -1,5 +1,5 @@
 /*
- * 4chord midi - board configuration settings
+ * 4chord MIDI - board configuration settings
  *
  * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
@@ -20,7 +20,7 @@
 #define _CONFIG_H_
 #include <avr/io.h>
 
-#define FOURCHORD_MIDI_VERSION "1.1"
+#define FOURCHORD_MIDI_VERSION "2.0-dev"
 
 /* SPI chip select port name */
 #define SPI_CS_PORT PORTB
