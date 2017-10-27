@@ -1,7 +1,7 @@
 /*
- * 4chord midi - Input button handling
+ * 4chord MIDI - Input button handling
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -46,8 +46,6 @@ struct button_handler {
     button_state state;
     /* previous state of button */
     button_state laststate;
-    /* if set, pressed callback handler is called only once, otherwise periodically */
-    uint8_t oneshot;
     /* button release and press callback handlers */
     union {
         button_callback_t callbacks[2];
@@ -63,28 +61,27 @@ struct button_handler {
 /* set up button handling and callbacks */
 static struct button_handler button_handlers[BUTTON_MAX] = {
     {   /* BUTTON_MENU_PREV */
-        .oneshot = 1,
         .callbacks = {
-            NULL,
-            menu_button_prev
-        }
+            menu_button_release,
+            menu_button_press
+        },
+        .callback_arg = (menu_button_t *) MENU_BUTTON_PREV,
     },
     {   /* BUTTON_MENU_SELECT */
-        .oneshot = 1,
         .callbacks = {
-            NULL,
-            menu_button_select
-        }
+            menu_button_release,
+            menu_button_press
+        },
+        .callback_arg = (menu_button_t *) MENU_BUTTON_SELECT,
     },
     {   /* BUTTON_MENU_NEXT */
-        .oneshot = 1,
         .callbacks = {
-            NULL,
-            menu_button_next
-        }
+            menu_button_release,
+            menu_button_press
+        },
+        .callback_arg = (menu_button_t *) MENU_BUTTON_NEXT,
     },
     {   /* BUTTON_CHORD_1 */
-        .oneshot = 0,
         .callbacks = {
             playback_button_release,
             playback_button_press,
@@ -92,7 +89,6 @@ static struct button_handler button_handlers[BUTTON_MAX] = {
         .callback_arg = (uint8_t *) 0
     },
     {   /* BUTTON_CHORD_2 */
-        .oneshot = 0,
         .callbacks = {
             playback_button_release,
             playback_button_press,
@@ -100,7 +96,6 @@ static struct button_handler button_handlers[BUTTON_MAX] = {
         .callback_arg = (uint8_t *) 1
     },
     {   /* BUTTON_CHORD_3 */
-        .oneshot = 0,
         .callbacks = {
             playback_button_release,
             playback_button_press,
@@ -108,7 +103,6 @@ static struct button_handler button_handlers[BUTTON_MAX] = {
         .callback_arg = (uint8_t *) 2
     },
     {   /* BUTTON_CHORD_4 */
-        .oneshot = 0,
         .callbacks = {
             playback_button_release,
             playback_button_press,
@@ -143,10 +137,6 @@ buttons_poll(void)
  * Handle all active buttons after polling.
  * If button port is active and has a callback function for the current state,
  * the callback function is called.
- * If the button is pressed, the callback is called either once or every time
- * the function is run, depending on the handler's oneshot value.
- * If the button is released, the callback is called only once regardless of
- * the oneshot value.
  */
 static void
 buttons_handle(void)
@@ -159,7 +149,7 @@ buttons_handle(void)
 
         if (handler->active && handler->callbacks[handler->state]) {
             if (handler->state != handler->laststate ||
-               (!handler->oneshot && handler->state != STATE_RELEASED))
+               (handler->state == STATE_PRESSED))
             {
                 handler->callbacks[handler->state](&handler->callback_arg);
             }

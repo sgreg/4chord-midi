@@ -62,6 +62,7 @@
 #include "buttons.h"
 #include "cli.h"
 #include "lcd.h"
+#include "menu.h"
 #include "nokia_gfx.h"
 #include "gui.h"
 #include "playback.h"
@@ -159,6 +160,7 @@ main(void) {
         usbPoll();
         button_input_loop();
         playback_poll();
+        menu_poll();
         cli_poll();
     }
 }

@@ -1,7 +1,7 @@
 /*
- * 4chord midi - Menu selection
+ * 4chord MIDI - Menu selection
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,6 +18,14 @@
  */
 #ifndef _MENU_H_
 #define _MENU_H_
+
+/* Menu button identifier list */
+typedef enum {
+    MENU_BUTTON_PREV,
+    MENU_BUTTON_SELECT,
+    MENU_BUTTON_NEXT,
+    MENU_BUTTON_MAX
+} menu_button_t;
 
 /* Menu item list */
 typedef enum {
@@ -79,22 +87,47 @@ playback_mode_item_t menu_get_current_playback_mode(void);
  * @return Currently selected playback tempo.
  */
 uint8_t menu_get_current_playback_tempo(void);
-/**
- * Button press callback function for Menu Next button
- * @param arg Unused
- */
-void menu_button_next(void *arg);
 
 /**
- * Button press callback function for Menu Previous button
- * @param arg Unused
+ * Button press handler function for Menu Previous button.
  */
-void menu_button_prev(void *arg);
+void menu_button_prev(void);
 
 /**
- * Button press callback function for Menu Select button
- * @param arg Unused
+ * Button press handler function for Menu Next button
  */
-void menu_button_select(void *arg);
+void menu_button_next(void);
+
+/**
+ * Button press handler function for Menu Select button
+ */
+void menu_button_select(void);
+
+
+/**
+ * Menu button press callback function.
+ * Called when one of the three menu buttons is pressed. The pressed menu
+ * button number is given in the arg parameter.
+ *
+ * @param arg Pressed button number, given as pointer to menu_button_t
+ */
+void menu_button_press(void *arg);
+
+/**
+ * Button release callback function.
+ * Called when one of the three menu buttons is released. The released menu
+ * button number is given in the arg parameter.
+ *
+ * @param arg Released button number, given as pointer menu_button_t
+ */
+void menu_button_release(void *arg);
+
+/**
+ * Menu button poll function.
+ *
+ * Called from the main loop to periodically check the menu button press
+ * state, and call the button's cycle function for long press cases.
+ */
+void menu_poll(void);
 
 #endif

@@ -23,7 +23,7 @@
 #include "timer.h"
 
 /* callback function to call on timer interrupt */
-timer_callback_t timer1_callback;
+static timer_callback_t timer1_callback;
 
 
 /**

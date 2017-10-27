@@ -119,16 +119,16 @@ cli_poll(void)
             case '-':
             case '<':
             case 'a':
-                menu_button_prev(NULL);
+                menu_button_prev();
                 break;
             case '\r':
             case 's':
-                menu_button_select(NULL);
+                menu_button_select();
                 break;
             case '+':
             case '>':
             case 'd':
-                menu_button_next(NULL);
+                menu_button_next();
                 break;
             case 'h':
                 uart_print_pgm(cli_help);

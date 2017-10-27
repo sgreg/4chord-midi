@@ -91,4 +91,14 @@ void play_stop_note(uint8_t note);
  */
 void playback_poll(void);
 
+/**
+ * Get the current playback state.
+ *
+ * If playback is ongoing, i.e. one of the chord buttons is pressed, the
+ * function returns 1, otherwise 0.
+ *
+ * @return 1 if playback is currently ongoing, 0 otherwise
+ */
+uint8_t playback_ongoing(void);
+
 #endif
