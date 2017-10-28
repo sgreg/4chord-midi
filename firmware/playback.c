@@ -117,13 +117,40 @@ playback_interval(void)
 }
 
 /**
+ * Returns the number of maximum count cycles for the
+ * currently selected playback metre.
+ *
+ * TODO should get an actual difference between x/4 and x/8 metres.
+ *      for example, at this point, 3/4 and 6/8 are identical here.
+ *
+ * @return Maximum count cycle value based on metre
+ */
+static uint8_t
+playback_metre_count(void)
+{
+    playback_metre_item_t metre = menu_get_current_playback_metre();
+
+    switch (metre) {
+        case PLAYBACK_METRE_4_4:
+            return 8;
+        case PLAYBACK_METRE_3_4:
+        case PLAYBACK_METRE_6_8:
+            return 6;
+        default:
+            break;
+    }
+
+    return 0;
+}
+
+/**
  * Timer compare match interrupt callback.
  * Use the playback_poll() function to check its state.
  */
 static void
 playback_cycle_timer_callback(void)
 {
-    if (++playback_mode->count == 8) {
+    if (++playback_mode->count == playback_metre_count()) {
         playback_mode->count = 0;
     }
     playback_timer_triggered = 1;
@@ -143,6 +170,7 @@ playback_poll(void)
         if (playback_mode->cycle != NULL) {
             playback_mode->cycle(&chord);
         }
+        lcd_set_metronome(playback_mode->count);
 
         playback_timer_triggered = 0;
     }
@@ -169,10 +197,11 @@ playback_button_press(void *arg)
         }
 
         if (playback_mode->cycle != NULL) {
+            lcd_set_metronome(0);
             timer1_start(playback_interval(), playback_cycle_timer_callback);
         }
         pressed = 1;
-        lcd_list_set_chord(chord_num, 1);
+        lcd_set_list_chord(chord_num, 1);
     }
 }
 
@@ -195,7 +224,8 @@ playback_button_release(void *arg)
     if (playback_mode->stop != NULL) {
         playback_mode->stop(&chord);
     }
-    lcd_list_set_chord(chord_num, 0);
+    lcd_set_list_chord(chord_num, 0);
+    lcd_set_metronome(0xff);
 }
 
 

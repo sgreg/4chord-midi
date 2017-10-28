@@ -22,6 +22,7 @@
 #include <stdint.h>
 
 #define FONT_CHORD_WIDTH 5
+#define FONT_METRE_WIDTH 5
 
 typedef enum {
     MAJ_C,
@@ -50,5 +51,6 @@ typedef enum {
 
 extern const uint8_t font_chord_keys[][FONT_CHORD_WIDTH];
 extern const uint8_t font_chord_mods[][FONT_CHORD_WIDTH];
+extern const uint8_t font_metre[][FONT_METRE_WIDTH];
 
 #endif

@@ -29,9 +29,10 @@ typedef enum {
 
 /* Menu item list */
 typedef enum {
-    MENU_MODE,
     MENU_KEY,
+    MENU_MODE,
     MENU_TEMPO,
+    MENU_METRE,
     MENU_MAX
 } menu_item_t;
 
@@ -62,6 +63,13 @@ typedef enum {
     PLAYBACK_MODE_MAX
 } playback_mode_item_t;
 
+/* */
+typedef enum {
+    PLAYBACK_METRE_4_4,
+    PLAYBACK_METRE_3_4,
+    PLAYBACK_METRE_6_8,
+    PLAYBACK_METRE_MAX
+} playback_metre_item_t;
 
 /**
  * Initialize the GUI menu.
@@ -87,6 +95,12 @@ playback_mode_item_t menu_get_current_playback_mode(void);
  * @return Currently selected playback tempo.
  */
 uint8_t menu_get_current_playback_tempo(void);
+
+/**
+ * Get the currently selected playback metre.
+ * @return Currently selected playback metre.
+ */
+uint8_t menu_get_current_playback_metre(void);
 
 /**
  * Button press handler function for Menu Previous button.

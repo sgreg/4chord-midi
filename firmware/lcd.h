@@ -90,7 +90,18 @@ void lcd_set_mode(const unsigned char *mode);
  * @param chord_num Chord number index of the currently selected key
  * @param highlighted Set chord display highlighted (1) or normal (0)
  */
-void lcd_list_set_chord(uint8_t chord_num, uint8_t highlighted);
+void lcd_set_list_chord(uint8_t chord_num, uint8_t highlighted);
+
+/**
+ */
+void lcd_set_metre(uint8_t top, uint8_t bot);
+
+/**
+ * Display the metronome beat.
+ *
+ * @param beat Beat number based on the playback cycle count
+ */
+void lcd_set_metronome(uint8_t beat);
 
 #endif
 

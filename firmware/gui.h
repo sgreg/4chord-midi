@@ -23,25 +23,25 @@
 #include "menu.h"
 
 /**
- * Write the given menu item graphic and update the LCD.
+ * Display the given menu item graphic on the LCD.
  * @param Menu item index in accordance with menu.h values
  */
 void gui_set_menu(menu_item_t item);
 
 /**
- * Write the given playback mode item graphic and update the LCD
+ * Display the given playback mode item graphic on the LCD.
  * @param Playback mode item index in accordance with menu.h values
  */
 void gui_set_playback_mode(playback_mode_item_t item);
 
 /**
- * Write the given playback key item graphic and update the LCD
+ * Display the given playback key item graphic on the LCD.
  * @param Playback key item index in accordance with menu.h values
  */
 void gui_set_playback_key(playback_mode_item_t item);
 
 /**
- * Set tempo to given value and update the LCD.
+ * Display the given tempo value on the LCD.
  * Takes tempo as 8 bit integer (>255bpm won't be supported anyway) and
  * splits it in three single digits. The digits' representing graphics
  * are then transferred to the LCD's tempo area.
@@ -49,5 +49,11 @@ void gui_set_playback_key(playback_mode_item_t item);
  * @param tempo New tempo
  */
 void gui_set_playback_tempo(uint8_t);
+
+/**
+ * Display the given metre value on the LCD.
+ * @param Menu item index in accordance with menu.h values
+ */
+void gui_set_playback_metre(playback_metre_item_t metre);
 
 #endif

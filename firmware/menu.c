@@ -35,6 +35,8 @@ static uint8_t playback_tempo_current;
 static playback_mode_item_t playback_mode_current;
 /* currently selected chord */
 static playback_key_item_t playback_key_current;
+/* currently selected metre */
+static playback_metre_item_t playback_metre_current;
 
 #define PLAYBACK_TEMPO_MIN 30
 #define PLAYBACK_TEMPO_DEFAULT 120
@@ -148,25 +150,57 @@ playback_tempo_down(void)
     }
 }
 
+/**
+ * Select the next playback metre and update the LCD.
+ * Cycles back to the first item after the last one.
+ */
+static void
+playback_metre_next(void)
+{
+    if (++playback_metre_current == PLAYBACK_METRE_MAX) {
+        playback_metre_current = 0;
+    }
+
+    gui_set_playback_metre(playback_metre_current);
+}
+
+/**
+ * Select the previous playback metre and update the LCD.
+ * Cycles back to the last item after the first one.
+ */
+static void
+playback_metre_prev(void)
+{
+    if (playback_metre_current == 0) {
+        playback_metre_current = PLAYBACK_METRE_MAX - 1;
+    } else {
+        playback_metre_current--;
+    }
+
+    gui_set_playback_metre(playback_metre_current);
+}
+
 
 /**
  * Callback function array for handling menu_button_prev() execution according
  * to the currently selected menu item.
  */
-static void (*menu_prev_handlers[3])(void) = {
-    playback_mode_prev,
+static void (*menu_prev_handlers[])(void) = {
     playback_key_prev,
-    playback_tempo_down
+    playback_mode_prev,
+    playback_tempo_down,
+    playback_metre_prev
 };
 
 /**
  * Callback function array for handling menu_button_next() execution according
  * to the currently selected menu item.
  */
-static void (*menu_next_handlers[3])(void) = {
-    playback_mode_next,
+static void (*menu_next_handlers[])(void) = {
     playback_key_next,
-    playback_tempo_up
+    playback_mode_next,
+    playback_tempo_up,
+    playback_metre_next
 };
 
 
@@ -212,11 +246,13 @@ menu_init(void)
     playback_mode_current  = PLAYBACK_MODE_CHORD;
     playback_key_current   = PLAYBACK_KEY_C;
     playback_tempo_current = PLAYBACK_TEMPO_DEFAULT;
+    playback_metre_current = PLAYBACK_METRE_4_4;
 
     gui_set_menu(menu_current);
     gui_set_playback_mode(playback_mode_current);
     gui_set_playback_key(playback_key_current);
     gui_set_playback_tempo(playback_tempo_current);
+    gui_set_playback_metre(playback_metre_current);
 }
 
 
@@ -248,6 +284,16 @@ uint8_t
 menu_get_current_playback_tempo(void)
 {
     return playback_tempo_current;
+}
+
+/**
+ * Get the currently selected playback metre.
+ * @return Currently selected playback metre.
+ */
+uint8_t
+menu_get_current_playback_metre(void)
+{
+    return playback_metre_current;
 }
 
 

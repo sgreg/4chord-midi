@@ -32,8 +32,8 @@
  * |111111111111111111111111111111111111111111|
  * |2222222222222222 33333333 4444444444444444|
  * |2222222222222222 33333333 4444444444444444|
- * |2222222222222222          5555555555555555|
- * |2222222222222222          5555555555555555|
+ * |2222222222222222 888  777 5555555555555555|
+ * |2222222222222222 888  777 5555555555555555|
  * |666666666666666666666666666666666666666666|
  * +------------------------------------------+
  * 
@@ -47,6 +47,8 @@
  * 4 Tempo          y1-2    x52-83  2*32 px
  * 5 Mode           y3-4    x52-83  2*32 px
  * 6 Chord list     y6      x0-84   1*64 px
+ * 7 Metre          y3-4    x45-49  2*5  px
+ * 8 Metronome      y3-4    x34-39  2*6  px
  */
 #include <stdint.h>
 #include <string.h>
@@ -94,15 +96,28 @@
 #define MODE_H   2
 
 /* display arrangement for the chord list area */
-#define LIST_X           0
 #define LIST_CHORD1_X    2
 #define LIST_CHORD2_X   23
 #define LIST_CHORD3_X   44
 #define LIST_CHORD4_X   65
 #define LIST_Y           5
-#define LIST_W          84
 #define LIST_CHORD_W    17
 #define LIST_H           1
+
+/* display arrangement for the metre area */
+#define METRE_X     45
+#define METRE_TOP_Y  3
+#define METRE_BOT_Y  4
+#define METRE_W      5
+#define METRE_H      1
+
+/* display arrangement for the metronome area */
+#define MET_X       34
+#define MET_TOP_Y    3
+#define MET_BOT_Y    4
+#define MET_W        6
+#define MET_H        1
+
 
 /**
  * Initialize the LCD.
@@ -277,9 +292,8 @@ lcd_set_chord(const unsigned char *chord[2])
     lcd_set_key_mod(chord[1]);
 
     for (i = 0; i < 4; i++) {
-        lcd_list_set_chord(i, 0);
+        lcd_set_list_chord(i, 0);
     }
-
 }
 
 /**
@@ -354,7 +368,7 @@ static uint8_t chord_list_offsets[] = {
  * @param highlighted Set chord display highlighted (1) or normal (0)
  */
 void
-lcd_list_set_chord(uint8_t chord_num, uint8_t highlighted)
+lcd_set_list_chord(uint8_t chord_num, uint8_t highlighted)
 {
     uint8_t i;
     uint8_t buf[LIST_CHORD_W];
@@ -390,6 +404,61 @@ lcd_list_set_chord(uint8_t chord_num, uint8_t highlighted)
     }
 
     lcd_set_mem(buf, chord_list_offsets[chord_num],
-            FONT_CHORD_WIDTH, LIST_CHORD_W, LIST_H);
+            LIST_Y, LIST_CHORD_W, LIST_H);
+}
+
+/**
+ * Display the playback metre.
+ *
+ * @param top Top part of the metre
+ * @param bottom Bottom part of the metre
+ *
+ * TODO figure out how top and bottom parts are actually called..
+ */
+void
+lcd_set_metre(uint8_t top, uint8_t bot)
+{
+    lcd_set_pgm(font_metre[top], METRE_X, METRE_TOP_Y,
+            FONT_METRE_WIDTH, METRE_H);
+
+    lcd_set_pgm(font_metre[bot], METRE_X, METRE_BOT_Y,
+            FONT_METRE_WIDTH, METRE_H);
+}
+
+
+/* metronome "graphics", a big and small dot, plus one to clear the area */
+static const uint8_t met_big[]   PROGMEM = {0x18, 0x3c, 0x7e, 0x7e, 0x3c, 0x18};
+static const uint8_t met_small[] PROGMEM = {0x00, 0x18, 0x3c, 0x3c, 0x18, 0x00};
+static const uint8_t met_clear[] PROGMEM = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+/**
+ * Display the metronome beat.
+ *
+ * Beat is based on the playback cycle, i.e 1/8th notes, and triggered
+ * from there. If the playback mode has no cycle callback - such as the
+ * simple chord playback mode, the metronome won't be displayed.
+ *
+ * Otherwise, if the beat is zero, a big dot is displayed in the top 
+ * area to indicate the start of the next bar. Any other even numbered
+ * beat will display a small dot in the bottom area. Even numbered beats
+ * clear the area and make it all blink.
+ *
+ * @param beat Beat number based on the playback cycle count
+ */
+void
+lcd_set_metronome(uint8_t beat)
+{
+    if (beat == 0) {
+        lcd_set_pgm(met_big,   MET_X, MET_TOP_Y, MET_W, MET_H);
+        lcd_set_pgm(met_clear, MET_X, MET_BOT_Y, MET_W, MET_H);
+
+    } else if ((beat & 0x01) == 0) {
+        lcd_set_pgm(met_clear, MET_X, MET_TOP_Y, MET_W, MET_H);
+        lcd_set_pgm(met_small, MET_X, MET_BOT_Y, MET_W, MET_H);
+
+    } else {
+        lcd_set_pgm(met_clear, MET_X, MET_TOP_Y, MET_W, MET_H);
+        lcd_set_pgm(met_clear, MET_X, MET_BOT_Y, MET_W, MET_H);
+    }
 }
 

@@ -23,9 +23,10 @@
 
 /* graphics data array for menus */
 static const unsigned char *menus[] = {
-    gfx_menu_mode,
     gfx_menu_key,
-    gfx_menu_tempo
+    gfx_menu_mode,
+    gfx_menu_tempo,
+    gfx_menu_metre
 };
 
 /* graphics data array for tempo digits */
@@ -125,5 +126,28 @@ gui_set_playback_tempo(uint8_t tempo)
     digit_graphics[2] = tempo_digits[digits[2]];
 
     lcd_set_tempo(digit_graphics);
+}
+
+/**
+ * Display the given metre value on the LCD.
+ * @param Menu item index in accordance with menu.h values
+ */
+void
+gui_set_playback_metre(playback_metre_item_t metre)
+{
+    /* there may be a better way for this.. but not today. Hard coded it is */
+    switch (metre) {
+        case PLAYBACK_METRE_4_4:
+            lcd_set_metre(4, 4);
+            break;
+        case PLAYBACK_METRE_3_4:
+            lcd_set_metre(3, 4);
+            break;
+        case PLAYBACK_METRE_6_8:
+            lcd_set_metre(6, 8);
+            break;
+        default:
+            break;
+    }
 }
 
