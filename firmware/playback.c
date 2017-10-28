@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <avr/pgmspace.h>
+#include "lcd.h"
 #include "menu.h"
 #include "playback.h"
 #include "timer.h"
@@ -171,6 +172,7 @@ playback_button_press(void *arg)
             timer1_start(playback_interval(), playback_cycle_timer_callback);
         }
         pressed = 1;
+        lcd_list_set_chord(chord_num, 1);
     }
 }
 
@@ -182,8 +184,10 @@ playback_button_press(void *arg)
  * @param arg Released button number, given as pointer to uint8_t (unused)
  */
 void
-playback_button_release(void *arg __attribute__((unused)))
+playback_button_release(void *arg)
 {
+    uint8_t chord_num = *((uint8_t *) arg);
+
     pressed = 0;
     timer1_stop();
     playback_mode->count = 0;
@@ -191,6 +195,7 @@ playback_button_release(void *arg __attribute__((unused)))
     if (playback_mode->stop != NULL) {
         playback_mode->stop(&chord);
     }
+    lcd_list_set_chord(chord_num, 0);
 }
 
 

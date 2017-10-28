@@ -83,5 +83,14 @@ void lcd_set_tempo(const unsigned char *digits[3]);
  */
 void lcd_set_mode(const unsigned char *mode);
 
+/**
+ * Display a single chord in the chord list area, highlighted or normal.
+ * Chords are based on the currently selected key set through the menu.
+ *
+ * @param chord_num Chord number index of the currently selected key
+ * @param highlighted Set chord display highlighted (1) or normal (0)
+ */
+void lcd_list_set_chord(uint8_t chord_num, uint8_t highlighted);
+
 #endif
 

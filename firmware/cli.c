@@ -63,17 +63,29 @@ Hardware is licensed under the CERN Open Hardware License version 1.2\r\n\
 USB connectivity implemented using Object Development's V-USB library\r\n\r\n\
 ";
 
-
-/* storage for chord button callback handler parameter */
-static uint8_t zero  = 0;
-static uint8_t one   = 1;
-static uint8_t two   = 2;
-static uint8_t three = 3;
+#define NO_BUTTON 0xff
+/* last pressed button for playback callback handler parameter */
+static uint8_t button = NO_BUTTON;
 
 /* command data read from UART */
 static char cmd;
 /* last command data read from UART */
 static char last;
+
+
+static void
+playback_handle(uint8_t new_button)
+{
+    if (button != NO_BUTTON) {
+        playback_button_release(&button);
+    }
+
+    button = new_button;
+
+    if (button != NO_BUTTON) {
+        playback_button_press(&button);
+    }
+}
 
 
 /**
@@ -98,23 +110,13 @@ cli_poll(void)
         last = cmd;
         switch (cmd) {
             case '1':
-                playback_button_release(NULL);
-                playback_button_press(&zero);
-                break;
             case '2':
-                playback_button_release(NULL);
-                playback_button_press(&one);
-                break;
             case '3':
-                playback_button_release(NULL);
-                playback_button_press(&two);
-                break;
             case '4':
-                playback_button_release(NULL);
-                playback_button_press(&three);
+                playback_handle(cmd - '1');
                 break;
             case ' ':
-                playback_button_release(NULL);
+                playback_handle(NO_BUTTON);
                 break;
             case '-':
             case '<':
