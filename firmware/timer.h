@@ -1,7 +1,7 @@
 /*
- * 4chord midi - Timer handling for progressive playback
+ * 4chord MIDI - Timer handling
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,6 +26,23 @@
 /* timer interrupt handler callback function */
 typedef void (*timer_callback_t)(void);
 
+
+/**
+ * Setup 8bit timer to Fast PWM mode to control LCD back light.
+ */
+void timer0_init_pwm(void);
+
+/**
+ * Set PWM value, i.e. timer0 output compare register.
+ *
+ * Back light is
+ *  - on  for the counting duration of 0 .. val
+ *  - off for the counting duration of val .. 255
+ * or in other worlds, the higher val, the brighter the back light.
+ *
+ * @param val Output compare value
+ */
+#define timer0_set_pwm(val) do { OCR0B = val; } while (0)
 
 /**
  * Start 16bit timer in given interval, executing given callback function

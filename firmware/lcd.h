@@ -1,7 +1,7 @@
 /*
- * 4chord midi - Nokia 3310 LCD handling
+ * 4chord MIDI - Nokia LCD handling
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -16,8 +16,17 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#ifndef _LCD3310_H_
-#define _LCD3310_H_
+#ifndef _LCD_H_
+#define _LCD_H_
+
+#include <stdint.h>
+#include "config.h"
+#include "nokia_gfx.h"
+
+/* set LCD reset pin high */
+#define lcd_rst_high()  do { LCD_RESET_PORT |=  (1 << LCD_RESET_PIN); } while (0)
+/* set LCD reset pin low */
+#define lcd_rst_low()   do { LCD_RESET_PORT &= ~(1 << LCD_RESET_PIN); } while (0)
 
 /**
  * Initialize the LCD.
@@ -25,22 +34,24 @@
 void lcd_init(void);
 
 /**
- * Update the LCD content.
- * Transfers the internal memory content via SPI to the LCD
- */
-void lcd_update(void);
-
-/**
- * Clear the LCD internal memory.
- * To actually clear the display, call lcd_update() afterwards.
+ * Clear the LCD by writing all zeros to it.
  */
 void lcd_clear(void);
 
 /**
- * Write a fullscreen image to the LCD internal memory.
- * Call lcd_update() to display the image on the LCD itself.
+ * Display fullscreen image data on the LCD.
+ * Note, data is expected to be stored in PROGMEM.
+ *
+ * @param data full screen PROGMEM data to display
  */
-void lcd_fullscreen(const unsigned char *data);
+void lcd_fullscreen(const uint8_t data[]);
+
+/**
+ * Display animation frame diff.
+ *
+ * @param frame frame transition data
+ */
+void lcd_animation_frame(const struct nokia_gfx_frame *frame);
 
 /**
  * Write the menu area to the LCD internal memory.
@@ -71,6 +82,26 @@ void lcd_set_tempo(const unsigned char *digits[3]);
  * @param mode Mode graphics to be written to internal memory
  */
 void lcd_set_mode(const unsigned char *mode);
+
+/**
+ * Display a single chord in the chord list area, highlighted or normal.
+ * Chords are based on the currently selected key set through the menu.
+ *
+ * @param chord_num Chord number index of the currently selected key
+ * @param highlighted Set chord display highlighted (1) or normal (0)
+ */
+void lcd_set_list_chord(uint8_t chord_num, uint8_t highlighted);
+
+/**
+ */
+void lcd_set_metre(uint8_t top, uint8_t bot);
+
+/**
+ * Display the metronome beat.
+ *
+ * @param beat Beat number based on the playback cycle count
+ */
+void lcd_set_metronome(uint8_t beat);
 
 #endif
 

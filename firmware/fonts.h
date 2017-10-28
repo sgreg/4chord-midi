@@ -1,5 +1,5 @@
 /*
- * 4chord MIDI - board configuration settings
+ * 4chord MIDI - Fonts
  *
  * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
@@ -16,25 +16,41 @@
  * along with this program. If not, see http://www.gnu.org/licenses/
  *
  */
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
-#include <avr/io.h>
+#ifndef _FONTS_H_
+#define _FONTS_H_
 
-#define FOURCHORD_MIDI_VERSION "2.0-dev"
+#include <stdint.h>
 
-/* SPI chip select port name */
-#define SPI_CS_PORT PORTB
-/* SPI chip select pin number */
-#define SPI_CS_PIN  PB2
+#define FONT_CHORD_WIDTH 5
+#define FONT_METRE_WIDTH 5
 
-/* SPI data/command port name */
-#define SPI_DC_PORT PORTB
-/* SPI data/command pin number */
-#define SPI_DC_PIN  PB1
+typedef enum {
+    MAJ_C,
+    MAJ_D,
+    MAJ_E,
+    MAJ_F,
+    MAJ_G,
+    MAJ_A,
+    MAJ_B,
+    MAJ_H,
+    MIN_C,
+    MIN_D,
+    MIN_E,
+    MIN_F,
+    MIN_G,
+    MIN_A,
+    MIN_B,
+    MIN_H,
+} font_chord_key_t;
 
-/* LCD reset port name */
-#define LCD_RESET_PORT  PORTB
-/* LCD reset pin number */
-#define LCD_RESET_PIN   PB0
+typedef enum {
+    NONE,
+    SHARP,
+    FLAT
+} font_chord_mod_t;
+
+extern const uint8_t font_chord_keys[][FONT_CHORD_WIDTH];
+extern const uint8_t font_chord_mods[][FONT_CHORD_WIDTH];
+extern const uint8_t font_metre[][FONT_METRE_WIDTH];
 
 #endif

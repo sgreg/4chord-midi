@@ -1,5 +1,5 @@
 /*
- * 4chord midi - main
+ * 4chord MIDI - main
  *
  * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
  *
@@ -55,20 +55,27 @@
  *  32  PD2     I   USB D+
  *
  */
+#include <stdint.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <util/delay.h>
 #include "buttons.h"
 #include "cli.h"
-#include "lcd3310.h"
+#include "lcd.h"
+#include "menu.h"
+#include "nokia_gfx.h"
 #include "gui.h"
 #include "playback.h"
+#include "spi.h"
+#include "timer.h"
 #include "uart.h"
 #include "usbdrv/usbdrv.h"
 
 int
 main(void) {
-    uint8_t i;
+    struct nokia_gfx_frame const *frames[NOKIA_GFX_FRAME_COUNT];
+    uint8_t i, j;
+    uint8_t frame_cnt = 0;
 
     /* set PB0, PB1, PB2, PB3, PB4 as output, rest input */
     DDRB  = (1 << DDB0) | (1 << DDB1) | (1 << DDB2) | (1 << DDB3) | (1 << DDB5);
@@ -81,26 +88,60 @@ main(void) {
     /* set PD1 and PD5 as output, rest input. */
     DDRD  = (1 << DDD1) | (1 << DDD5);
     /* set outputs high, enable pullups for all inputs except V-USB ones */
-    PORTD = ~((1 << PD2) | (1 << PD6) | (1 << PD7)) & 0xff;
+    PORTD = ~((1 << PD2) | (1 << PD5) | (1 << PD6) | (1 << PD7)) & 0xff;
+
+    // TODO this could use some improvement
+    // TODO xbm2nokia should do this automatically
+    frames[0] = &nokia_gfx_trans_intro_01_intro_02;
+    frames[1] = &nokia_gfx_trans_intro_02_intro_03;
+    frames[2] = &nokia_gfx_trans_intro_03_intro_04;
+    frames[3] = &nokia_gfx_trans_intro_04_intro_05;
+    frames[4] = &nokia_gfx_trans_intro_05_intro_06;
+    frames[5] = &nokia_gfx_trans_intro_06_intro_07;
+    frames[6] = &nokia_gfx_trans_intro_07_intro_08;
+    frames[7] = &nokia_gfx_trans_intro_08_intro_09;
+    frames[8] = &nokia_gfx_trans_intro_09_intro_10;
+    frames[9] = &nokia_gfx_trans_intro_10_intro_11;
+    frames[10] = &nokia_gfx_trans_intro_11_intro_12;
+    frames[11] = &nokia_gfx_trans_intro_12_intro_01; // FIXME not needed
 
     uart_init(UART_BRATE_38400_12MHZ);
-    cli_print();
+    spi_init();
 
+    lcd_rst_low();
+    cli_print(); /* this should give enough delay for the LCD to reset */
+    lcd_rst_high();
     lcd_init();
-    gui_printlogo();
+
+    timer0_init_pwm();
+    lcd_fullscreen(nokia_gfx_keyframe);
 
     /* set up V-USB, see also http://vusb.wikidot.com/driver-api */
     usbDeviceDisconnect();
-    _delay_ms(300);
+    for (i = 0, j = 0; i < 25; i++) {
+        usbPoll();
+        timer0_set_pwm(i << 2);
+        _delay_ms(10);
+        if (++j == 5) {
+            lcd_animation_frame(frames[frame_cnt++]);
+            j = 0;
+        }
+    }
     usbDeviceConnect();
     usbInit();
 
     sei();
 
     /* delay to display GUI logo, but also poll USB or else USB fails */
-    for (i = 0; i < 150; i++) {
+    // TODO this could use some clean up
+    for (i <<= 2, j = 0; i < 0xff; i++) {
         usbPoll();
+        timer0_set_pwm(i);
         _delay_ms(10);
+        if (frame_cnt < NOKIA_GFX_FRAME_COUNT - 1 && ++j == 5) {
+            lcd_animation_frame(frames[frame_cnt++]);
+            j = 0;
+        }
     }
 
     /* map buttons to inputs */
@@ -119,6 +160,7 @@ main(void) {
         usbPoll();
         button_input_loop();
         playback_poll();
+        menu_poll();
         cli_poll();
     }
 }

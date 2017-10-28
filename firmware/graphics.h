@@ -19,6 +19,7 @@ extern const unsigned char gfx_key_none[32];
 extern const unsigned char gfx_key_sharp[32];
 extern const unsigned char gfx_logo[504];
 extern const unsigned char gfx_menu_key[84];
+extern const unsigned char gfx_menu_metre[84];
 extern const unsigned char gfx_menu_mode[84];
 extern const unsigned char gfx_menu_tempo[84];
 extern const unsigned char gfx_mode_arp_oct[64];
