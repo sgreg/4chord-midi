@@ -1,7 +1,7 @@
 /*
  * 4chord midi - USB MIDI
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,9 +30,8 @@
  * http://www.usb.org/developers/docs/devclass_docs/midi10.pdf
  *
  * The descriptor definition is based and taken from the example found in
- * the above mentioned document, Appendix B.1. ..this is practically what
- * every V-USB based MIDI project seems to do. 
- * TODO: figure out which of these definitions are actually really needed.
+ * the above mentioned document, Appendix B.1. and was adjusted to provide
+ * one interface (MIDI IN Jack) with one bulk endpoint.
  */
 
 /*
@@ -64,7 +63,7 @@ const char usb_midi_config_descriptor[] PROGMEM = {
 /* B.2   Configuration Descriptor */
     0x09,               /* [1] size of this descriptor in bytes (9)         */
     USBDESCR_CONFIG,    /* [1] descriptor type (CONFIGURATION)              */
-    0x65, 0x00,         /* [2] total length of descriptor in bytes (101)    */
+    0x3f, 0x00,         /* [2] total length of descriptor in bytes (63)     */
     0x02,               /* [1] number of interfaces (2)                     */
     0x01,               /* [1] ID of this configuration (1)                 */
     0x00,               /* [1] configuration, unused                        */
@@ -92,13 +91,13 @@ const char usb_midi_config_descriptor[] PROGMEM = {
     0x01,               /* [1] number of streaming interfaces (1)           */
     0x01,               /* [1] MIDIStreaming iface 1 belongs to this iface  */
 
-/* B.4   MIDIStreaming Interface Descriptors */
+/* B.4   MIDIStreaming (MS) Interface Descriptors */
 /* B.4.1 Standard MIDIStreaming Interface Descriptor */
     0x09,               /* [1] size of this descriptor in bytes (9)         */
     USBDESCR_INTERFACE, /* [1] descriptor type (INTERFACE)                  */
     0x01,               /* [1] index of this interface (1)                  */
     0x00,               /* [1] index of this alternate setting (0)          */
-    0x02,               /* [1] number of endpoints to follow (2)            */
+    0x01,               /* [1] number of endpoints to follow (1)            */
     0x01,               /* [1] interface class (AUDIO)                      */
     0x03,               /* [1] interface sublass (MIDSTREAMING)             */
     0x00,               /* [1] interface protocol, unused                   */
@@ -118,53 +117,6 @@ const char usb_midi_config_descriptor[] PROGMEM = {
     0x01,               /* [1] jack type (EMBEDDED)                         */
     0x01,               /* [1] jack ID (1)                                  */
     0x00,               /* [1] unused */
-/* B.4.3 MIDI IN Jack Descriptor External */
-    0x06,               /* [1] size of this descriptor in bytes (6)         */
-    0x24,               /* [1] descriptor type (CS_INTERFACE)               */
-    0x02,               /* [1] header subtype (MIDI_IN_JACK)                */
-    0x02,               /* [1] jack type (EXTERNAL)                         */
-    0x02,               /* [1] jack ID (2)                                  */
-    0x00,               /* [1] unused */
-
-/* B.4.4 MIDI OUT Jack Descriptor Embedded */
-    0x09,               /* [1] size of this descriptor in bytes (9)         */
-    0x24,               /* [1] descriptor type (CS_INTERFACE)               */
-    0x03,               /* [1] header subtype (MIDI_OUT_JACK)               */
-    0x01,               /* [1] jack type (EMBEDDED)                         */
-    0x03,               /* [1] jack ID (3)                                  */
-    0x01,               /* [1] number of input pins (1)                     */
-    0x02,               /* [1] ID of entity pin is connected to (2)         */
-    0x01,               /* [1] entity output pin input pin is connected to  */
-    0x00,               /* [1] unused */
-/* B.4.4 MIDI OUT Jack Descriptor External */
-    0x09,               /* [1] size of this descriptor in bytes (9)         */
-    0x24,               /* [1] descriptor type (CS_INTERFACE)               */
-    0x03,               /* [1] header subtype (MIDI_OUT_JACK)               */
-    0x02,               /* [1] jack type (EXTERNAL)                         */
-    0x04,               /* [1] jack ID (4)                                  */
-    0x01,               /* [1] number of input pins (1)                     */
-    0x01,               /* [1] ID of entity pin is connected to (1)         */
-    0x01,               /* [1] entity output pin input pin is connected to  */
-    0x00,               /* [1] unused */
-
-/* B.5   Bulk OUT Endpoint Descriptors */
-/* B.5.1 Stanard Bulk OUT Endpoint Descriptor */
-    0x09,               /* [1] size of this descriptor in bytes (9)         */
-    USBDESCR_ENDPOINT,  /* [1] descriptor type (ENDPOINT)                   */
-    0x01,               /* [1] endpoint address (OUT 1)                     */
-    0x03,               /* [1] attribute (interrupt endpoint)               */
-    0x08, 0x00,         /* [2] max packet size (8)                          */
-    0x0a,               /* [1] interval in ms (10)                          */
-    0x00,               /* [1] refresh                                      */
-    0x00,               /* [1] sync address                                 */
-
-/* B.5.2 Class-specific MS Bulk OUT Endpoint Descriptor */
-    0x05,               /* [1] size of this descriptor in bytes (5)         */
-    0x25,               /* [1] descriptor type (CS_ENDPOINT)                */
-    0x01,               /* [1] descriptor subtype (MS_GENERAL)              */
-    0x01,               /* [1] number of embedded MIDI IN jacks (1)         */
-    0x01,               /* [1] id of the embedded MIDI IN jack (1)          */
-
 
 /* B.6   Bulk IN Endpoint Descriptors */
 /* B.6.1 Standard Bulk IN Endpoint Descriptor */
@@ -182,7 +134,7 @@ const char usb_midi_config_descriptor[] PROGMEM = {
     0x25,               /* [1] descriptor type (CS_ENDPOINT)                */
     0x01,               /* [1] descriptor subtype (MS_GENERAL)              */
     0x01,               /* [1] number of embedded MIDI OUT jacks (1)        */
-    0x03,               /* [1] id of the embedded MIDI OUT jack (3)         */
+    0x01,               /* [1] id of the embedded MIDI OUT jack (1)         */
 };
 
 
