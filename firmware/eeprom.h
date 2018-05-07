@@ -20,9 +20,24 @@
 #define _EEPROM_H_
 #include <stdint.h>
 #include <avr/eeprom.h>
+#include "menu.h"
 
 extern struct eeprom_data_t {
-    uint8_t dummy[0x10];
+    /* reserved for later use */
+    uint8_t __header[0x10];             /* 0x00 */
+    /* reserved for later use */
+    uint8_t __meta[0x10];               /* 0x10 */
+    /* reserved for later use */
+    uint8_t __board_data[0x10];         /* 0x20 */
+    /* default settings */
+    struct {
+        menu_item_t menu;               /* 0x30 */
+        playback_key_item_t key;        /* 0x31 */
+        playback_mode_item_t mode;      /* 0x32 */
+        playback_metre_item_t metre;    /* 0x33 */
+        playback_tempo_item_t tempo;    /* 0x34 */
+        uint8_t __reserved[11];         /* 0x35 */
+    } defaults;
 } eeprom_data EEMEM;
 
 #endif

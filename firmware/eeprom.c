@@ -18,7 +18,15 @@
  */
 #include <avr/eeprom.h>
 #include "eeprom.h"
+#include "menu.h"
 
 struct eeprom_data_t eeprom_data EEMEM = {
-    .dummy = "something",
+    /* initial default values */
+    .defaults = {
+        .menu  = MENU_KEY,
+        .key   = PLAYBACK_KEY_C,
+        .mode  = PLAYBACK_MODE_CHORD,
+        .metre = PLAYBACK_METRE_4_4,
+        .tempo = PLAYBACK_TEMPO_DEFAULT,
+    },
 };

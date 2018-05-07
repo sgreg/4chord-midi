@@ -63,13 +63,20 @@ typedef enum {
     PLAYBACK_MODE_MAX
 } playback_mode_item_t;
 
-/* */
+/* Playback metre list */
 typedef enum {
     PLAYBACK_METRE_4_4,
     PLAYBACK_METRE_3_4,
     PLAYBACK_METRE_6_8,
     PLAYBACK_METRE_MAX
 } playback_metre_item_t;
+
+/* Playback tempo ranges */
+typedef enum {
+    PLAYBACK_TEMPO_MIN = 30,
+    PLAYBACK_TEMPO_DEFAULT = 120,
+    PLAYBACK_TEMPO_MAX = 240
+} playback_tempo_item_t;
 
 /**
  * Initialize the GUI menu.

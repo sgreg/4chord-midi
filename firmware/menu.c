@@ -21,6 +21,9 @@
  */
 #include <stdint.h>
 #include <stdio.h>
+#include <avr/eeprom.h>
+#include <util/delay.h>
+#include "eeprom.h"
 #include "menu.h"
 #include "gui.h"
 #include "playback.h"
@@ -30,17 +33,13 @@
 /* currently selected menu item */
 static menu_item_t menu_current;
 /* currently selected tempo */
-static uint8_t playback_tempo_current;
+static playback_tempo_item_t playback_tempo_current;
 /* currently selected mode */
 static playback_mode_item_t playback_mode_current;
 /* currently selected chord */
 static playback_key_item_t playback_key_current;
 /* currently selected metre */
 static playback_metre_item_t playback_metre_current;
-
-#define PLAYBACK_TEMPO_MIN 30
-#define PLAYBACK_TEMPO_DEFAULT 120
-#define PLAYBACK_TEMPO_MAX 240
 
 #define DELAY_LONG_PRESS    0x44a8 /* 1.5 seconds */
 #define DELAY_CYCLE_SLOW    0x16e2 /* 0.5 seconds */
@@ -236,17 +235,17 @@ menu_button_select(void)
 
 /**
  * Initialize the GUI menu.
- * Set up all internal default values and call the GUI functions to draw the
- * menu on the LCD.
+ * Set up all internal default values from the EEPROM and call the GUI
+ * functions to draw the menu on the LCD.
  */
 void
 menu_init(void)
 {
-    menu_current           = MENU_KEY;
-    playback_mode_current  = PLAYBACK_MODE_CHORD;
-    playback_key_current   = PLAYBACK_KEY_C;
-    playback_tempo_current = PLAYBACK_TEMPO_DEFAULT;
-    playback_metre_current = PLAYBACK_METRE_4_4;
+    menu_current           = eeprom_read_byte(&eeprom_data.defaults.menu);
+    playback_key_current   = eeprom_read_byte(&eeprom_data.defaults.key);
+    playback_mode_current  = eeprom_read_byte(&eeprom_data.defaults.mode);
+    playback_metre_current = eeprom_read_byte(&eeprom_data.defaults.metre);
+    playback_tempo_current = eeprom_read_byte(&eeprom_data.defaults.tempo);
 
     gui_set_menu(menu_current);
     gui_set_playback_mode(playback_mode_current);
@@ -342,16 +341,36 @@ static uint8_t cycle_handled;
 
 
 /**
- * Toggle the LCD's inverse video mode.
+ * Save current setup as default.
+ *
+ * Stores all current playback settings as new default values in the EEPROM.
+ * Toggle the LCD's inverse video mode for a short moment as visual indicator
+ * that something is happening here.
  *
  * This is just temporarily to have somethig happening when long pressing
  * the "Select" menu button. Later on this will be replaced by a general
  * settings menu opening up.
  */
-static void toggle_inverse(void) {
-    static uint8_t inverse;
-    spi_send_command((inverse) ? 0x0c : 0x0d);
-    inverse = !inverse;
+static void save_defaults(void) {
+    /* go one step back so long press won't affect menu selection */
+    if (menu_current == 0) {
+        menu_current = MENU_MAX - 1;
+    } else {
+        menu_current--;
+    }
+    gui_set_menu(menu_current);
+
+    /* set inverse video mode and wait a bit */
+    spi_send_command(0x0d);
+    _delay_ms(125);
+    /* store default values to EEPROM and wait a bit */
+    eeprom_write_byte(&eeprom_data.defaults.key, playback_key_current);
+    eeprom_write_byte(&eeprom_data.defaults.mode, playback_mode_current);
+    eeprom_write_byte(&eeprom_data.defaults.tempo, playback_tempo_current);
+    eeprom_write_byte(&eeprom_data.defaults.metre, playback_metre_current);
+    _delay_ms(125);
+    /* set normal video mode back */
+    spi_send_command(0x0c);
 }
 
 /* menu handler structure for "<" button */
@@ -366,7 +385,7 @@ static menu_handler_t menu_handler_prev = {
 /* menu handler structure for "Select" button */
 static menu_handler_t menu_handler_select =  {
     .start = menu_button_select,
-    .cycle = toggle_inverse, // TODO add settings menu here later
+    .cycle = save_defaults, // TODO add settings menu here later
     .init_delay = DELAY_LONG_PRESS,
     .cont_delay_cycles = 0
 };
