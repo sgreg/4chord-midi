@@ -26,11 +26,15 @@ include ../common.mk
 
 cli.o: CFLAGS += -DBUILD_DATE_STRING="\"$(shell /bin/date +%d%m%y-%H%M%S)\""
 
-default: $(PROGRAM).bin
+default: $(PROGRAM).hex $(PROGRAM).bin
 
-$(PROGRAM).bin: $(PROGRAM).hex
+$(PROGRAM).bin: $(PROGRAM).elf
 	@echo "[CP]  $@"
-	@$(OBJCOPY) -I ihex -O binary $^ $@
+	@$(OBJCOPY) -O binary -R .eeprom $< $@
+
+$(PROGRAM).eep: $(PROGRAM).elf
+	@echo "[CP]  $@"
+	@$(OBJCOPY) -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 -O ihex $< $@
 
 program:
 	@echo "\n  +---------------------------------------------------+"
@@ -39,8 +43,14 @@ program:
 	@echo "  +---------------------------------------------------+\n"
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -U flash:w:$(PROGRAM).hex
 
-distclean::
-	rm -f $(PROGRAM).bin
+program-eeprom: $(PROGRAM).eep
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -U eeprom:w:$<
 
-.PHONY: program distclean
+distclean::
+	@echo "[RM]  $(PROGRAM).bin"
+	@rm -f $(PROGRAM).bin
+	@echo "[RM]  $(PROGRAM).eep"
+	@rm -f $(PROGRAM).eep
+
+.PHONY: program program-eeprom distclean
 
