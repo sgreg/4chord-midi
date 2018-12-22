@@ -1,7 +1,7 @@
 /*
  * 4chord midi - UART communication
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2018 Sven Gregori <svengregori@gmail.com>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -92,6 +92,14 @@ uart_newline(void)
     uart_putchar('\n');
 }
 
+/**
+ * Clear the UART output screen by sending \f character
+ */
+void
+uart_clear_screen(void)
+{
+    uart_putchar('\f');
+}
 
 /**
  * Print a given string via UART.

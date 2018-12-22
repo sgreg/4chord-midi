@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Menu selection
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -247,6 +247,34 @@ menu_init(void)
     playback_metre_current = eeprom_read_byte(&eeprom_data.defaults.metre);
     playback_tempo_current = eeprom_read_byte(&eeprom_data.defaults.tempo);
 
+    /* Sanitize values and make sure they are valid */
+    if (menu_current >= MENU_MAX) {
+        menu_current = MENU_KEY;
+        eeprom_update_byte(&eeprom_data.defaults.menu, menu_current);
+    }
+
+    if (playback_key_current >= PLAYBACK_KEY_MAX) {
+        playback_key_current = PLAYBACK_KEY_C;
+        eeprom_update_byte(&eeprom_data.defaults.key, playback_key_current);
+    }
+
+    if (playback_mode_current >= PLAYBACK_MODE_MAX) {
+        playback_mode_current = PLAYBACK_MODE_CHORD;
+        eeprom_update_byte(&eeprom_data.defaults.mode, playback_mode_current);
+    }
+
+    if (playback_metre_current >= PLAYBACK_METRE_MAX) {
+        playback_metre_current = PLAYBACK_METRE_4_4;
+        eeprom_update_byte(&eeprom_data.defaults.metre, playback_metre_current);
+    }
+
+    if (playback_tempo_current < PLAYBACK_TEMPO_MIN ||
+            playback_tempo_current > PLAYBACK_TEMPO_MAX)
+    {
+        playback_tempo_current = PLAYBACK_TEMPO_DEFAULT;
+        eeprom_update_byte(&eeprom_data.defaults.tempo, playback_tempo_current);
+    }
+
     gui_set_menu(menu_current);
     gui_set_playback_mode(playback_mode_current);
     gui_set_playback_key(playback_key_current);
@@ -364,10 +392,11 @@ static void save_defaults(void) {
     spi_send_command(0x0d);
     _delay_ms(125);
     /* store default values to EEPROM and wait a bit */
-    eeprom_write_byte(&eeprom_data.defaults.key, playback_key_current);
-    eeprom_write_byte(&eeprom_data.defaults.mode, playback_mode_current);
-    eeprom_write_byte(&eeprom_data.defaults.tempo, playback_tempo_current);
-    eeprom_write_byte(&eeprom_data.defaults.metre, playback_metre_current);
+    eeprom_update_byte(&eeprom_data.defaults.menu, menu_current);
+    eeprom_update_byte(&eeprom_data.defaults.key, playback_key_current);
+    eeprom_update_byte(&eeprom_data.defaults.mode, playback_mode_current);
+    eeprom_update_byte(&eeprom_data.defaults.metre, playback_metre_current);
+    eeprom_update_byte(&eeprom_data.defaults.tempo, playback_tempo_current);
     _delay_ms(125);
     /* set normal video mode back */
     spi_send_command(0x0c);

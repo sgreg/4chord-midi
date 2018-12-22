@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - UART command line interface
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@
 
 /* 4chord MIDI banner */
 static const char cli_banner[] PROGMEM =
-"\f\r\n\
+"\r\n\
          ___      _                   _ \r\n\
         /   |    | |                 | |       _________   _   ______   _\r\n\
        / /| | ___| |__   ___  _ __ __| |      |  _   _  \\ | | |____  \\ | |\r\n\
@@ -55,7 +55,6 @@ static const char cli_about[] PROGMEM =
 "\r\n\r\n\
 4chord MIDI - The Four Chord USB MIDI Keyboard\r\n\
 http://4chord.craplab.fi\r\n\r\n\
-Copyright (C) 2017 Sven Gregori <sven@craplab.fi>\r\n\r\n\
 Firmware version:  " FOURCHORD_MIDI_VERSION " built " BUILD_DATE_STRING "\r\n\
 Hardware revision: B (08-2017)\r\n\r\n\
 Firmware is licensed under the GNU General Public License version 2\r\n\
