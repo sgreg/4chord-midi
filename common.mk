@@ -44,7 +44,7 @@ F_CPU = 12000000
 # correct fuse settings.
 #
 FUSE_LOW = 0xf7
-FUSE_HIGH = 0xd8
+FUSE_HIGH = 0xd0
 FUSE_EXTENDED = 0xff
 FUSE_DUMP_TOOL = $(BASE_PATH)/tools/atmega328p_fuse_dump
 
@@ -65,17 +65,19 @@ ASFLAGS_ASM += -Wa,-gstabs
 
 LDFLAGS += -Wl,-Map=$(PROGRAM).map,--cref
 
+SIZE_FLAGS += -C --mcu=$(MCU)
 AVRDUDE_FLAGS += -p $(MCU) -c usbasp
 
 
 .PRECIOUS : %.elf %.o
 
 all: default
+	@echo ""
+	@$(SIZE) $(SIZE_FLAGS) $(PROGRAM).elf
 
 $(PROGRAM).hex: $(PROGRAM).elf
 	@echo "[CP]  $@"
 	@$(OBJCOPY) -O ihex -R .eeprom $< $@
-	@$(SIZE) $^
 
 $(PROGRAM).elf: $(OBJS)
 	@echo "[LD]  $@"
@@ -86,7 +88,7 @@ $(PROGRAM).elf: $(OBJS)
 	@$(CC) -c $(CFLAGS) $(ASFLAGS_C) $< -o $@
 
 %.o: %.S
-	@echo "[ASM] $@"
+	@echo "[AS]  $@"
 	@$(CC) -c $(CFLAGS) -x assembler-with-cpp $(ASFLAGS_ASM) $< -o $@
 
 
@@ -101,15 +103,19 @@ fuses-dump:
 fuses: fuses-dump
 	$(AVRDUDE) $(AVRDUDE_FLAGS) -U lfuse:w:$(FUSE_LOW):m -U hfuse:w:$(FUSE_HIGH):m -U efuse:w:$(FUSE_EXTENDED):m
 
-
 clean:
-	rm -f $(OBJS)
+	@echo "[RM]  $(OBJS)"
+	@rm -f $(OBJS)
 
 distclean:: clean
-	rm -f $(OBJS:.o=.lst)
-	rm -f $(PROGRAM).map
-	rm -f $(PROGRAM).elf
-	rm -f $(PROGRAM).hex
+	@echo "[RM]  $(OBJS:.o=.lst)"
+	@rm -f $(OBJS:.o=.lst)
+	@echo "[RM]  $(PROGRAM).map"
+	@rm -f $(PROGRAM).map
+	@echo "[RM]  $(PROGRAM).elf"
+	@rm -f $(PROGRAM).elf
+	@echo "[RM]  $(PROGRAM).hex"
+	@rm -f $(PROGRAM).hex
 
 .PHONY: all fuses-dump fuses clean distclean
 

@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - main
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -61,6 +61,7 @@
 #include <util/delay.h>
 #include "buttons.h"
 #include "cli.h"
+#include "eeprom.h"
 #include "lcd.h"
 #include "menu.h"
 #include "nokia_gfx.h"
@@ -106,10 +107,15 @@ main(void) {
     frames[11] = &nokia_gfx_trans_intro_12_intro_01; // FIXME not needed
 
     uart_init(UART_BRATE_38400_12MHZ);
-    spi_init();
+    uart_clear_screen();
 
+    spi_init();
     lcd_rst_low();
-    cli_print(); /* this should give enough delay for the LCD to reset */
+
+    /* this should give enough delay for the LCD to reset */
+    eeprom_init();
+    cli_print();
+
     lcd_rst_high();
     lcd_init();
 
