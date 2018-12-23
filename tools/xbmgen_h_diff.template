@@ -1,0 +1,25 @@
+/*
+ * xbmgen .h template for diff frame graphic
+ *
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+ * Released under GPLv2
+ *
+ */
+#ifndef XBMGEN_H
+#define XBMGEN_H
+
+#define DIFF_FRAME 1
+
+#include "@frame_one@.xbm"
+#include "@frame_two@.xbm"
+
+#define xbmgen_frame_width  @frame_one@_width
+#define xbmgen_frame_height @frame_one@_height
+#define xbmgen_frame1_data  @frame_one@_bits
+#define xbmgen_frame2_data  @frame_two@_bits
+
+#define xbm_file1 "@frame_one@.xbm"
+#define xbm_file2 "@frame_two@.xbm"
+#define framename "@namespace@_@frame_one@__@frame_two@"
+
+#endif

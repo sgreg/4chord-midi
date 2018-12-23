@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - LCD graphical user interface
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@
  *
  */
 #include <stdint.h>
-#include "graphics.h"
+#include "gfx.h"
 #include "lcd.h"
 #include "menu.h"
 

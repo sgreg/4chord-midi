@@ -1,0 +1,23 @@
+/*
+ * xbmgen .h template for full frame graphic
+ *
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+ * Released under GPLv2
+ *
+ */
+#ifndef XBMGEN_H
+#define XBMGEN_H
+
+#undef DIFF_FRAME
+
+#include "@frame_one@.xbm"
+
+#define xbmgen_frame_width  @frame_one@_width
+#define xbmgen_frame_height @frame_one@_height
+#define xbmgen_frame1_data  @frame_one@_bits
+#define xbmgen_frame2_data  @frame_one@_bits
+
+#define xbm_file  "@frame_one@.xbm"
+#define framename "@namespace@_@frame_one@"
+
+#endif
