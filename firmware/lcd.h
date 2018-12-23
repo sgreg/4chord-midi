@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Nokia LCD handling
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@
 
 #include <stdint.h>
 #include "config.h"
-#include "nokia_gfx.h"
+#include "xbmlib.h"
 
 /* set LCD reset pin high */
 #define lcd_rst_high()  do { LCD_RESET_PORT |=  (1 << LCD_RESET_PIN); } while (0)
@@ -39,19 +39,14 @@ void lcd_init(void);
 void lcd_clear(void);
 
 /**
- * Display fullscreen image data on the LCD.
- * Note, data is expected to be stored in PROGMEM.
+ * Display the given xbmlib frame on the display.
+ * Wrapper function for all nokia_lcd_write_*_frame() functions, taking
+ * a xbmlib frame struct and selects the right write function based on
+ * the frame's type.
  *
- * @param data full screen PROGMEM data to display
+ * @param frame xbmlib frame data referencing the actual data to display
  */
-void lcd_fullscreen(const uint8_t data[]);
-
-/**
- * Display animation frame diff.
- *
- * @param frame frame transition data
- */
-void lcd_animation_frame(const struct nokia_gfx_frame *frame);
+void lcd_write_frame(const struct xbmlib_frame *frame);
 
 /**
  * Write the menu area to the LCD internal memory.

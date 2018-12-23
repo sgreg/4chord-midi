@@ -64,7 +64,8 @@
 #include "eeprom.h"
 #include "lcd.h"
 #include "menu.h"
-#include "nokia_gfx.h"
+#include "xbmlib.h"
+#include "intro.h"
 #include "gui.h"
 #include "playback.h"
 #include "spi.h"
@@ -74,7 +75,6 @@
 
 int
 main(void) {
-    struct nokia_gfx_frame const *frames[NOKIA_GFX_FRAME_COUNT];
     uint8_t i, j;
     uint8_t frame_cnt = 0;
 
@@ -91,21 +91,6 @@ main(void) {
     /* set outputs high, enable pullups for all inputs except V-USB ones */
     PORTD = ~((1 << PD2) | (1 << PD5) | (1 << PD6) | (1 << PD7)) & 0xff;
 
-    // TODO this could use some improvement
-    // TODO xbm2nokia should do this automatically
-    frames[0] = &nokia_gfx_trans_intro_01_intro_02;
-    frames[1] = &nokia_gfx_trans_intro_02_intro_03;
-    frames[2] = &nokia_gfx_trans_intro_03_intro_04;
-    frames[3] = &nokia_gfx_trans_intro_04_intro_05;
-    frames[4] = &nokia_gfx_trans_intro_05_intro_06;
-    frames[5] = &nokia_gfx_trans_intro_06_intro_07;
-    frames[6] = &nokia_gfx_trans_intro_07_intro_08;
-    frames[7] = &nokia_gfx_trans_intro_08_intro_09;
-    frames[8] = &nokia_gfx_trans_intro_09_intro_10;
-    frames[9] = &nokia_gfx_trans_intro_10_intro_11;
-    frames[10] = &nokia_gfx_trans_intro_11_intro_12;
-    frames[11] = &nokia_gfx_trans_intro_12_intro_01; // FIXME not needed
-
     uart_init(UART_BRATE_38400_12MHZ);
     uart_clear_screen();
 
@@ -120,7 +105,7 @@ main(void) {
     lcd_init();
 
     timer0_init_pwm();
-    lcd_fullscreen(nokia_gfx_keyframe);
+    lcd_write_frame(&intro_frames[frame_cnt++]);
 
     /* set up V-USB, see also http://vusb.wikidot.com/driver-api */
     usbDeviceDisconnect();
@@ -129,7 +114,7 @@ main(void) {
         timer0_set_pwm(i << 2);
         _delay_ms(10);
         if (++j == 5) {
-            lcd_animation_frame(frames[frame_cnt++]);
+            lcd_write_frame(&intro_frames[frame_cnt++]);
             j = 0;
         }
     }
@@ -144,8 +129,8 @@ main(void) {
         usbPoll();
         timer0_set_pwm(i);
         _delay_ms(10);
-        if (frame_cnt < NOKIA_GFX_FRAME_COUNT - 1 && ++j == 5) {
-            lcd_animation_frame(frames[frame_cnt++]);
+        if (frame_cnt < intro_frames_count && ++j == 5) {
+            lcd_write_frame(&intro_frames[frame_cnt++]);
             j = 0;
         }
     }

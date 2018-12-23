@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Nokia LCD handling
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -56,12 +56,13 @@
 #include "fonts.h"
 #include "lcd.h"
 #include "menu.h"
-#include "nokia_gfx.h"
 #include "spi.h"
+#include "xbmlib.h"
 
 #define LCD_START_LINE_ADDR (66-2)
 #define LCD_X_RES   84
 #define LCD_Y_RES   48
+#define LCD_MEMORY_SIZE     ((LCD_X_RES * LCD_Y_RES) / 8)
 
 /* display arrangement for the menu area */
 #define MENU_X   0
@@ -142,62 +143,144 @@ lcd_init(void)
 void
 lcd_clear(void)
 {
-    uint8_t x;
-    uint8_t y;
-                   
-    for (y = 0; y < LCD_Y_RES / 8; y++) {
-        spi_send_command(0x80);     // set X addr to 0x00
-        spi_send_command(0x40 | y); // set Y addr to y
-        for (x = 0; x < LCD_X_RES; x++) {
-            spi_send_data(0x00);
-        }
+    uint16_t addr;
+
+    spi_send_command(0x80); // set X addr to 0x00
+    spi_send_command(0x40); // set Y addr to 0x00
+
+    for (addr = 0; addr < LCD_MEMORY_SIZE; addr++) {
+        spi_send_data(0x00);
     }
 }
 
 /**
  * Display fullscreen image data on the LCD.
- * Note, data is expected to be stored in PROGMEM.
+ * Note, data is expected to be stored in PROGMEM and contain the
+ * full display size of data (i.e. LCD_MEMORY_SIZE bytes)
  *
  * @param data full screen PROGMEM data to display
  */
-void
-lcd_fullscreen(const uint8_t data[])
+static void
+lcd_write_full_frame(const uint8_t *data)
 {
-    uint8_t x;
-    uint8_t y;
-                   
-    for (y = 0; y < LCD_Y_RES / 8; y++) {
-        spi_send_command(0x80);     // set X addr to 0x00
-        spi_send_command(0x40 | y); // set Y addr to y
-        for (x = 0; x < LCD_X_RES; x++) {
-            /* read data from PROGMEM variable and send it */
-            spi_send_data(pgm_read_byte(&(data[y * LCD_X_RES + x])));
-        }
+    uint16_t addr;
+
+    spi_send_command(0x80); // set X addr to 0x00
+    spi_send_command(0x40); // set Y addr to 0x00
+
+    for (addr = 0; addr < LCD_MEMORY_SIZE; addr++) {
+        spi_send_data(pgm_read_byte(&data[addr]));
     }
 }
 
 /**
- * Display animation frame diff.
+ * Display diff frame image on the LCD.
+ * Writes given diff frame data one by one to the x and y position
+ * the diffs' addresses correspond to.
  *
- * @param frame frame transition data
+ * @param frame diff frame date to display
+ */
+static void
+lcd_write_diff_frame(const struct xbmlib_diff_frame *frame)
+{
+    uint8_t diff_index;
+    uint8_t diffcnt = pgm_read_byte(&(frame->diffcnt));
+    struct xbmlib_diff diff;
+    uint8_t x, y;
+    uint16_t full_addr;
+    uint8_t last_addr = 0;
+    uint8_t offset = 0;
+
+    for (diff_index = 0; diff_index < diffcnt; diff_index++) {
+        diff.addr = pgm_read_word(&(frame->diffs[diff_index].addr));
+        diff.data = pgm_read_byte(&(frame->diffs[diff_index].data));
+
+        if (last_addr > diff.addr) {
+            offset++;
+        }
+
+        last_addr = diff.addr;
+        full_addr = diff.addr + 256 * offset;
+
+        y = full_addr / LCD_X_RES;
+        x = full_addr - y * LCD_X_RES;
+
+        spi_send_command(0x80 | x); // set X addr to `x`
+        spi_send_command(0x40 | y); // set Y addr to `y`
+        spi_send_data(diff.data);
+    }
+}
+
+/**
+ * Display key diff frame image on the LCD.
+ * Writes given key diff frame data one by one to the x and y position
+ * the diffs' addresses correspond to. For all other addresses, the
+ * base_value stored in the given diff frame struct is written.
+ *
+ * @param frame key diff frame date to display
+ */
+static void
+lcd_write_key_diff_frame(const struct xbmlib_key_diff_frame *frame)
+{
+    uint8_t diff_index;
+    uint8_t base_value = pgm_read_byte(&(frame->base_value));
+    uint8_t diffcnt = pgm_read_byte(&(frame->diffcnt));
+    struct xbmlib_diff diff;
+    uint16_t full_addr;
+    uint8_t last_addr = 0;
+    uint8_t offset = 0;
+    uint16_t current_addr = 0;
+
+    spi_send_command(0x80); // set X addr to 0x00
+    spi_send_command(0x40); // set Y addr to 0x00
+
+    for (diff_index = 0; diff_index < diffcnt; diff_index++) {
+        diff.addr = pgm_read_word(&(frame->diffs[diff_index].addr));
+        diff.data = pgm_read_byte(&(frame->diffs[diff_index].data));
+
+        if (last_addr > diff.addr) {
+            offset++;
+        }
+
+        last_addr = diff.addr;
+        full_addr = diff.addr + 256 * offset;
+
+        while (current_addr++ < full_addr) {
+            spi_send_data(base_value);
+        }
+
+        spi_send_data(diff.data);
+    }
+
+    while (current_addr++ < LCD_MEMORY_SIZE) {
+        spi_send_data(base_value);
+    }
+}
+
+/**
+ * Display the given xbmlib frame on the display.
+ * Wrapper function for all nokia_lcd_write_*_frame() functions, taking
+ * a xbmlib frame struct and selects the right write function based on
+ * the frame's type.
+ *
+ * @param frame xbmlib frame data referencing the actual data to display
  */
 void
-lcd_animation_frame(const struct nokia_gfx_frame *frame)
+lcd_write_frame(const struct xbmlib_frame *frame)
 {
-    uint16_t i;
-    uint16_t cnt = pgm_read_word(&(frame->diffcnt));
-    struct nokia_gfx_diff diff;
-    uint8_t x, y;
+    uint8_t frame_type = pgm_read_byte(&frame->type);
+    void *ptr = pgm_read_ptr(&frame->data);
 
-    for (i = 0; i < cnt; i++) {
-        diff.addr = pgm_read_word(&(frame->diffs[i].addr));
-        diff.data = pgm_read_byte(&(frame->diffs[i].data));
-
-        y = diff.addr / 84;
-        x = diff.addr - ((uint16_t) (y * 84));
-        spi_send_command(0x80 | x); // set X addr to x
-        spi_send_command(0x40 | y); // set Y addr to y
-        spi_send_data(diff.data);
+    switch (frame_type) {
+        case TYPE_FULL:
+            lcd_write_full_frame(ptr);
+            break;
+        case TYPE_DIFF:
+            lcd_write_diff_frame(ptr);
+            break;
+        case TYPE_KEY_DIFF:
+            lcd_write_key_diff_frame(ptr);
+            break;
     }
 }
 
