@@ -1,7 +1,7 @@
 /*
  * 4chord midi - USB MIDI
  *
- * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -23,6 +23,8 @@
 #include "usbconfig.h"
 #include "usbdrv/usbdrv.h"
 
+static const char send_failed_string[] PROGMEM = "USB send failed\r\n";
+
 /*
  * USB MIDI device and configuration descriptor setup
  * For more details, refer to the Universal Serial Bus Device Class Definition
@@ -38,7 +40,7 @@
  * USB MIDI adapter device descriptor.
  * Based on the USB device class definition example found in Appendix B.1
  */
-const char usb_midi_device_descriptor[] PROGMEM = {
+const uint8_t usb_midi_device_descriptor[] PROGMEM = {
     0x12,                   /* [1] size of this descriptor in bytes (18)    */
     USBDESCR_DEVICE,        /* [1] descriptor type (DEVICE)                 */
     0x10, 0x01,             /* [2] supported USB version (1.10)             */
@@ -59,7 +61,7 @@ const char usb_midi_device_descriptor[] PROGMEM = {
  * USB MIDI configuration adapter descriptor.
  * Based on the USB device class definition example found in Appendix B.2-B.6
  */
-const char usb_midi_config_descriptor[] PROGMEM = {
+const uint8_t usb_midi_config_descriptor[] PROGMEM = {
 /* B.2   Configuration Descriptor */
     0x09,               /* [1] size of this descriptor in bytes (9)         */
     USBDESCR_CONFIG,    /* [1] descriptor type (CONFIGURATION)              */
@@ -141,15 +143,15 @@ const char usb_midi_config_descriptor[] PROGMEM = {
 /**
  * V-USB descriptor setup callback function
  */
-uchar
+uint8_t
 usbFunctionDescriptor(usbRequest_t * request)
 {
     if (request->wValue.bytes[1] == USBDESCR_DEVICE) {
-        usbMsgPtr = (uchar *) usb_midi_device_descriptor;
+        usbMsgPtr = (uint8_t *) usb_midi_device_descriptor;
         return sizeof(usb_midi_device_descriptor);
 
     } else {    /* must be config descriptor */
-        usbMsgPtr = (uchar *) usb_midi_config_descriptor;
+        usbMsgPtr = (uint8_t *) usb_midi_config_descriptor;
         return sizeof(usb_midi_config_descriptor);
     }
 }
@@ -157,58 +159,11 @@ usbFunctionDescriptor(usbRequest_t * request)
 /**
  * V-USB setup callback function.
  */
-uchar
-usbFunctionSetup(uchar data[8])
+uint8_t
+usbFunctionSetup(uint8_t *data __attribute__((unused)))
 {
-    //usbRequest_t *rq = (void *) data;
-    uchar i;
-
-    uart_print("usb setup: ");
-    for (i = 0; i < 8; i++) {
-        uart_puthex(data[i]);
-        uart_putchar(' ');
-    }
-    uart_newline();
-
     return 0;
 }
-
-/**
- * V-USB read callback function
- */
-uchar
-usbFunctionRead(uchar *data, uchar len)
-{
-    memset(data, 0x00, len);
-    return len;
-}
-
-/**
- * V-USB write callback function
- */
-uchar
-usbFunctionWrite(uchar *data __attribute__((unused)), uchar len __attribute__((unused)))
-{
-    return 1;
-}
-
-/**
- * V-USB interrupt/bulk write callback function
- */
-void
-usbFunctionWriteOut(uchar * data, uchar len)
-{
-    uchar i;
-
-    uart_print("writeout message length ");
-    uart_putint(len, 1);
-    uart_print(": ");
-    for (i = 0; i < len; i++) {
-        uart_puthex(data[i]);
-    }
-    uart_newline();
-}
-
 
 
 /**
@@ -244,6 +199,6 @@ usb_send_midi_message(uint8_t byte0, uint8_t byte1, uint8_t byte2, uint8_t byte3
         }
         _delay_ms(2);
     }
-    uart_print("USB send fail\r\n");
+    uart_print_pgm(send_failed_string);
 }
 

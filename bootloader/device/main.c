@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI bootloader - Main
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -318,7 +318,7 @@ main(void) {
                 uart_print("page ");
                 uart_putint(recv_data.page, 2);
                 uart_print(" addr ");
-                uart_putint(recv_data.page << 7, 5);
+                uart_putint((recv_data.page - 1) << 7, 5);
                 uart_print(" with ");
                 uart_putint(recv_data.size, 3);
                 uart_print(" bytes: ");

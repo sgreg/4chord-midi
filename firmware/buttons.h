@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Input button handling
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,10 +27,10 @@ typedef enum {
     BUTTON_MENU_PREV,
     BUTTON_MENU_SELECT,
     BUTTON_MENU_NEXT,
-    BUTTON_CHORD_1,
-    BUTTON_CHORD_2,
-    BUTTON_CHORD_3,
-    BUTTON_CHORD_4,
+    BUTTON_CHORD_I,
+    BUTTON_CHORD_V,
+    BUTTON_CHORD_vi,
+    BUTTON_CHORD_IV,
     BUTTON_MAX
 } button_name;
 

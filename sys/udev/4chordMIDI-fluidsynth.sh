@@ -2,7 +2,7 @@
 #
 # 4chord MIDI - automatic fluidsynth setup script
 #
-# Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
 #
 # This script is supposed to be called by udev when plugging in and
 # out a 4chord MIDI device. It will check if fluidsynth is running,
@@ -14,25 +14,28 @@
 # when called from udev, but it's quite handy during development.
 #
 
-
 # Path setup for all required executables and sound font files.
 # Obviously, you need them installed to make this work, and depending
 # on yout Linux distribution, the paths might need some adjustments.
-
-# /path/to/aconnect
+#
+# aconnect - part of alsa-utils
 ACONNECT="/usr/bin/aconnect"
-
-# /path/to/fluidsynth
+#
+# fluidsynth
 FLUIDSYNTH="/usr/bin/fluidsynth"
-
-# /path/to/soundfonts
-SOUNDFONTS="/usr/share/sounds/sf2/FluidR3_GM.sf2"
+#
+# soundfonts - related to fluidsynth but usually comes as own package
+# Path to the soundfonts depends on your system, adjust accordingly.
+#
+# Ubuntu has them for example in /usr/share/sounds/sf2/FluidR3_GM.sf2
+# Arch on the other hand in /usr/share/soundfonts/FluidR3_GM.sf2
+SOUNDFONTS="/usr/share/soundfonts/FluidR3_GM.sf2"
 
 # Path to PID file of fluidsynth process started from within this script.
 # Ideally this would reside in /var/run but since this script is executed
 # as normal user, it would need some additional permission setup before,
 # but to keep things simple for now, /tmp is used.
-PIDFILE="/tmp/fooscript.pid"
+PIDFILE="/tmp/4chordMIDI-fluidsynth.pid"
 
 
 # start - 4chord MIDI device was plugged in
@@ -40,16 +43,19 @@ if [ "$1" == "start" ] ; then
     # make sure all required executables and other files exist
     if [ ! -f $ACONNECT ] ; then
         echo "cannot find aconnect executable"
+        echo "check the path and comments in the script's ACONNECT variable"
         exit 1;
     fi
 
     if [ ! -f $FLUIDSYNTH ] ; then
         echo "cannot find fluidsynth executable"
+        echo "check the path and comments in the script's FLUIDSYNTH variable"
         exit 1
     fi
 
     if [ ! -f $SOUNDFONTS ] ; then
         echo "cannot find sound fonts file"
+        echo "check the path and comments in the script's SOUNDFONTS variable"
         exit 1
     fi
 
@@ -74,9 +80,12 @@ if [ "$1" == "start" ] ; then
     in=$($ACONNECT -i |sed -n "s/^client \([0-9]*\): '4chord MIDI\(.*\)/\1/p")
     out=$($ACONNECT -o |sed -n "s/^client \([0-9]*\): 'FLUID Synth\(.*\)/\1/p")
 
-    # make sure both ports exists
-    if [ -z "$in" ] || [ -z "$out" ] ; then
-        echo "something went wrong"
+    # make sure both MIDI ports exist
+    if [ -z "$in" ] ; then
+        echo "cannot find 4chord MIDI input port"
+        exit 1
+    elif [ -z "$out" ] ; then
+        echo "cannot find fluidsynth output port"
         exit 1
     fi
 
@@ -100,8 +109,10 @@ elif [ "$1" == "stop" ] ; then
     if [ -d /proc/$pid ] && [ "$(readlink -f /proc/$pid/exe)" == "$FLUIDSYNTH" ] ; then
         echo "killing fluidsynth"
         kill -9 $pid
+    elif [ ! -d /proc/$pid ] ; then
+        echo "whoops, no such process"
     else
-        echo "whoops, found PID isn't a fluidsynth process"
+        echo "whoops, that PID isn't a fluidsynth process"
     fi
 
     # clean up the PID file

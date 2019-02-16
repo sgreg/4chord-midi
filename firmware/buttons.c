@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Input button handling
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@
  *
  */
 #include <stdio.h>
-#include <avr/io.h>
+#include <stdint.h>
 #include "buttons.h"
 #include "menu.h"
 #include "playback.h"
@@ -81,28 +81,28 @@ static struct button_handler button_handlers[BUTTON_MAX] = {
         },
         .callback_arg = (menu_button_t *) MENU_BUTTON_NEXT,
     },
-    {   /* BUTTON_CHORD_1 */
+    {   /* BUTTON_CHORD_I */
         .callbacks = {
             playback_button_release,
             playback_button_press,
         },
         .callback_arg = (uint8_t *) 0
     },
-    {   /* BUTTON_CHORD_2 */
+    {   /* BUTTON_CHORD_V */
         .callbacks = {
             playback_button_release,
             playback_button_press,
         },
         .callback_arg = (uint8_t *) 1
     },
-    {   /* BUTTON_CHORD_3 */
+    {   /* BUTTON_CHORD_vi */
         .callbacks = {
             playback_button_release,
             playback_button_press,
         },
         .callback_arg = (uint8_t *) 2
     },
-    {   /* BUTTON_CHORD_4 */
+    {   /* BUTTON_CHORD_IV */
         .callbacks = {
             playback_button_release,
             playback_button_press,

@@ -1,7 +1,7 @@
 #
 # 4chord MIDI - Common Makefile definitions
 #
-# Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
 #
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -71,7 +71,9 @@ AVRDUDE_FLAGS += -p $(MCU) -c usbasp
 
 .PRECIOUS : %.elf %.o
 
-all: default
+all: default size
+
+size:
 	@echo ""
 	@$(SIZE) $(SIZE_FLAGS) $(PROGRAM).elf
 
@@ -117,5 +119,5 @@ distclean:: clean
 	@echo "[RM]  $(PROGRAM).hex"
 	@rm -f $(PROGRAM).hex
 
-.PHONY: all fuses-dump fuses clean distclean
+.PHONY: all size fuses-dump fuses clean distclean
 

@@ -4,7 +4,7 @@
 # create raw graphics data from XBM files for Nokia 5110 LCDs
 #
 #
-# Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
 # Released under GPLv2
 #
 # see `usage` function for general usage information.
@@ -162,12 +162,18 @@ elif [ $debug -eq 1 ] ; then
     echo "Using existing output dir $outdir"
 fi
 
+outdir_source_file="$outdir/$namespace.c"
+outdir_header_file="$outdir/$namespace.h"
+
 # check if generated output files already exist
-if [ -e $outdir/$namespace.c ] || [ -e $outdir/$namespace.h ] ; then
+if [ -e $outdir_source_file ] || [ -e $outdir_header_file ] ; then
     read -p "Output file exists, overwrite? [y/N] " choice
-    if [ "${choice,,}" != "y" ] ; then
-        echo "Aborting"
-        exit 1
+    if [ "${choice,,}" == "y" ] ; then
+        echo "Deleting $outdir_source_file and $outdir_header_file"
+        rm -f $outdir_source_file $outdir_header_file
+    else
+        echo "Moving on with existing files"
+        exit 0
     fi
 fi
 
@@ -282,7 +288,7 @@ function create_graphic_frame {
 #   Nothing
 #
 function create_graphic {
-    echo "creating graphic from $1"
+    echo "Creating graphic from $1"
     if [ -e $builddir/$1 ] ; then
         echo "WARNING: file is duplicate, skipping"
     else
@@ -300,7 +306,7 @@ function create_graphic {
 #   Nothing
 #
 function create_key_frame {
-    echo "creating keyframe from $1"
+    echo "Creating keyframe from $1"
     create_graphic_frame $1 "$srcdir/xbmgen_h_full.template"
     add_frame_to_list $?
 }
@@ -325,7 +331,7 @@ function create_diff_frame {
     prefix_two="$(basename $two .xbm)"
     outfile="diff_frame_${prefix_one}-${prefix_two}"
 
-    echo "creating frame $one -> $two"
+    echo "Creating frame $one -> $two"
     if [ ! -e $builddir/$one ] ; then
         cp $one $builddir
     fi
@@ -470,6 +476,7 @@ cat >> $header_output_file << EOL
 EOL
 
 # copy generated header and source file in current directory
+echo "Writing $output_type to $outdir_source_file and $outdir_header_file"
 cp $header_output_file $outdir
 cp $source_output_file $outdir
 

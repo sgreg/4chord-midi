@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Nokia LCD handling
  *
- * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -97,10 +97,10 @@
 #define MODE_H   2
 
 /* display arrangement for the chord list area */
-#define LIST_CHORD1_X    2
-#define LIST_CHORD2_X   23
-#define LIST_CHORD3_X   44
-#define LIST_CHORD4_X   65
+#define LIST_CHORD_I_X   2
+#define LIST_CHORD_V_X  23
+#define LIST_CHORD_vi_X 44
+#define LIST_CHORD_IV_X 65
 #define LIST_Y           5
 #define LIST_CHORD_W    17
 #define LIST_H           1
@@ -437,10 +437,10 @@ static const uint8_t chord_list_map[PLAYBACK_KEY_MAX][4][2] PROGMEM = {
 
 /* Chord list position offsets. */
 static uint8_t chord_list_offsets[] = {
-    LIST_CHORD1_X,
-    LIST_CHORD2_X,
-    LIST_CHORD3_X,
-    LIST_CHORD4_X
+    LIST_CHORD_I_X,
+    LIST_CHORD_V_X,
+    LIST_CHORD_vi_X,
+    LIST_CHORD_IV_X
 };
 
 /**
