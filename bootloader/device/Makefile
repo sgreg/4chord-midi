@@ -1,7 +1,7 @@
 #
 # 4chord MIDI bootloader - Makefile
 #
-# Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
 #
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -23,7 +23,7 @@ BOOTLOAD_ADDR = 0x7000
 OBJS = main.o uart.o
 OBJS += usbdrv/usbdrv.o usbdrv/usbdrvasm.o
 ifneq ($(DEBUG),1)
-OBJS += spi.o lcd.o nokia_gfx.o
+OBJS += spi.o lcd.o gfx.o
 endif
 
 include ../../common.mk

@@ -25,7 +25,7 @@
 #include <util/delay.h>
 #ifndef DEBUG
 #include "lcd.h"
-#include "nokia_gfx.h"
+#include "gfx.h"
 #include "spi.h"
 #endif
 #include "uart.h"
@@ -81,7 +81,6 @@ uint8_t state = ST_IDLE;
 #ifndef DEBUG
 #define PROGRESS_BAR_LEN        LCD_X_RES
 #define PROGRESS_BAR_ROW_INDEX  5
-uint8_t progress_bar_changed;
 void clear_progress_bar(void);
 #endif
 
@@ -103,9 +102,7 @@ usbFunctionSetup(uchar data[8])
 #ifdef DEBUG
                 uart_print("HELLO\r\n");
 #else
-                if (progress_bar_changed) {
-                    clear_progress_bar();
-                }
+                clear_progress_bar();
 #endif
                 usbMsgPtr = banner;
                 return sizeof(banner);
@@ -288,8 +285,6 @@ void program(void)
     spi_send_command(0x80 | progress);
     spi_send_command(0x40 | PROGRESS_BAR_ROW_INDEX);
     spi_send_data(0xff);
-
-    progress_bar_changed = 1;
 #endif
 }
 
@@ -303,8 +298,6 @@ void clear_progress_bar(void)
         spi_send_command(0x40 | PROGRESS_BAR_ROW_INDEX);
         spi_send_data(0x00);
     }
-
-    progress_bar_changed = 0;
 }
 #endif
 
@@ -363,7 +356,7 @@ main(void)
 
 #ifndef DEBUG
     lcd_init();
-    lcd_fullscreen(nokia_gfx_splash);
+    lcd_fullscreen(gfx_splash);
 #endif
 
     usbDeviceDisconnect();

@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI bootloader - Nokia LCD handling
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -66,26 +66,21 @@ lcd_init(void)
 }
 
 /**
- * Display fullscreen image on the LCD.
- * Writes given data straight to the LCD via SPI.
- *
- * Note, data is expected to be stored in PROGMEM.
+ * Display fullscreen image data on the LCD.
+ * Note, data is expected to be stored in PROGMEM and contain the
+ * full display size of data (i.e. LCD_MEMORY_SIZE bytes)
  *
  * @param data full screen PROGMEM data to display
  */
 void
-lcd_fullscreen(const uint8_t data[])
+lcd_fullscreen(const uint8_t *data)
 {
-    uint8_t x;
-    uint8_t y;
-                   
-    for (y = 0; y < LCD_Y_RES / 8; y++) {
-        spi_send_command(0x80);     // set X addr to 0x00
-        spi_send_command(0x40 | y); // set Y addr to y
-        for (x = 0; x < LCD_X_RES; x++) {
-            /* read data straight from PROGMEM variable and send it */
-            spi_send_data(pgm_read_byte(&(data[y * LCD_X_RES + x])));
-        }
+    uint16_t addr;
+
+    spi_send_command(0x80); // set X addr to 0x00
+    spi_send_command(0x40); // set Y addr to 0x00
+
+    for (addr = 0; addr < LCD_MEMORY_SIZE; addr++) {
+        spi_send_data(pgm_read_byte(&data[addr]));
     }
-    spi_send_data(0x00);
 }

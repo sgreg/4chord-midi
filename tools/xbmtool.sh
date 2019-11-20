@@ -210,6 +210,11 @@ if [ $debug -eq 1 ] ; then
     gcc_flags+="-g -Wall -Wextra"
 fi
 
+xbmlib_header_include='#include "xbmlib.h"'
+if [ $mode_graphics -eq 1 ] && [ $full_graphics -eq 1 ] ; then
+    # no need to include xbmlib.h for full graphics, so let's not
+    xbmlib_header_include=''
+fi
 
 # write file header to .h output file
 cat > $header_output_file << EOL
@@ -220,7 +225,7 @@ cat > $header_output_file << EOL
 #ifndef ${namespace^^}_H
 #define ${namespace^^}_H
 #include <stdint.h>
-#include "xbmlib.h"
+$xbmlib_header_include
 
 EOL
 
