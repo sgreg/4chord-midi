@@ -33,11 +33,12 @@ USB_SEND = 0x40
 USB_RECV = 0xC0
 
 # Bootloader commands
-CMD_HELLO   = 0x55
-CMD_INFO    = 0x10
-CMD_MEMPAGE = 0x20
-CMD_VERIFY  = 0x30
-CMD_BYE     = 0xaa
+CMD_HELLO               = 0x01
+CMD_FWUPDATE_INIT       = 0x10
+CMD_FWUPDATE_MEMPAGE    = 0x11
+CMD_FWUPDATE_VERIFY     = 0x12
+CMD_FWUPDATE_FINALIZE   = 0x13
+CMD_BYE                 = 0xf0
 
 #
 #             (\.   \      ,/)
@@ -149,7 +150,7 @@ print("""
                 device=hello.tostring().decode('UTF-8')))
 
 # send INFO with number of pages to write
-dev.ctrl_transfer(USB_SEND, CMD_INFO, total_pages, 0)
+dev.ctrl_transfer(USB_SEND, CMD_FWUPDATE_INIT, total_pages, 0)
 
 total_retries = 0
 max_retries = 0
@@ -184,10 +185,10 @@ while True:
             sys.stdout.write('\r            Writing.....: {:d}/{:d}'.format(page_number, total_pages))
 
         sys.stdout.flush()
-        dev.ctrl_transfer(USB_SEND, CMD_MEMPAGE, 0, 0, data)
+        dev.ctrl_transfer(USB_SEND, CMD_FWUPDATE_MEMPAGE, 0, 0, data)
 
         # read back last page
-        ret = dev.ctrl_transfer(USB_RECV, CMD_VERIFY, 0, 0, PAGESIZE)
+        ret = dev.ctrl_transfer(USB_RECV, CMD_FWUPDATE_VERIFY, 0, 0, PAGESIZE)
 
         # verify byte by byte
         all_good = True
@@ -206,6 +207,9 @@ while True:
                     max_retries = retry_count
                     max_retry_page = page_number
                 print('')
+
+# finalize firmware update
+dev.ctrl_transfer(USB_SEND, CMD_FWUPDATE_FINALIZE, 0, 0)
 
 # gracefully end with a BYE
 dev.ctrl_transfer(USB_SEND, CMD_BYE, 0, 0)
