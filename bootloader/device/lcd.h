@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI bootloader - Nokia LCD handling
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,8 +21,9 @@
 
 #define LCD_X_RES   84
 #define LCD_Y_RES   48
+#define LCD_MEMORY_SIZE     ((LCD_X_RES * LCD_Y_RES) / 8)
 
 void lcd_init(void);
-void lcd_fullscreen(const uint8_t data[]);
+void lcd_fullscreen(const uint8_t *data);
 
 #endif

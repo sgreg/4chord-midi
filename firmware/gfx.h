@@ -5,7 +5,7 @@
 #ifndef GFX_H
 #define GFX_H
 #include <stdint.h>
-#include "xbmlib.h"
+
 
 /* full frame for key_a.xbm */
 extern const uint8_t gfx_key_a[];

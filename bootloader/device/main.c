@@ -14,17 +14,18 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see http://www.gnu.org/licenses/
- * 
+ *
  */
 #include <string.h>
 #include <avr/boot.h>
+#include <avr/eeprom.h>
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/wdt.h>
 #include <util/delay.h>
 #ifndef DEBUG
 #include "lcd.h"
-#include "nokia_gfx.h"
+#include "gfx.h"
 #include "spi.h"
 #endif
 #include "uart.h"
@@ -32,6 +33,7 @@
 #include "usbdrv/usbdrv.h"
 
 #define VERSION "1.0"
+uint8_t banner[] = "4chord MIDI bootloader " VERSION;
 
 void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
 void program(void);
@@ -54,25 +56,31 @@ static uint8_t *recv_ptr;
 static uint8_t repl_len;
 static uint8_t repl_cnt;
 
-#define CMD_HELLO   0x55
-#define CMD_INFO    0x10
-#define CMD_MEMPAGE 0x20
-#define CMD_VERIFY  0x30
-#define CMD_BYE     0xaa
+#define EEPROM_BUF_MAX 16
+static uint8_t eeprom_buf[EEPROM_BUF_MAX];
+
+#define CMD_HELLO               0x01
+#define CMD_FWUPDATE_INIT       0x10
+#define CMD_FWUPDATE_MEMPAGE    0x11
+#define CMD_FWUPDATE_VERIFY     0x12
+#define CMD_FWUPDATE_FINALIZE   0x13
+#define CMD_EEPROM_READ         0x20
+#define CMD_EEPROM_WRITE        0x30
+#define CMD_BYE                 0xf0
+#define CMD_RESET               0xfa
 
 #define ST_IDLE     0
 #define ST_HELLO    1
-#define ST_VERSION  2
-#define ST_TRANSMIT 3
+#define ST_FWUPDATE 2
+#define ST_RESET    3
 uint8_t state = ST_IDLE;
+
 #define HELLO_VALUE 0x4d71
 #define HELLO_INDEX 0x6921
-uint8_t banner[] = "4chord MIDI bootloader " VERSION;
 
 #ifndef DEBUG
 #define PROGRESS_BAR_LEN        LCD_X_RES
 #define PROGRESS_BAR_ROW_INDEX  5
-uint8_t progress_bar_changed;
 void clear_progress_bar(void);
 #endif
 
@@ -94,37 +102,35 @@ usbFunctionSetup(uchar data[8])
 #ifdef DEBUG
                 uart_print("HELLO\r\n");
 #else
-                if (progress_bar_changed) {
-                    clear_progress_bar();
-                }
+                clear_progress_bar();
 #endif
                 usbMsgPtr = banner;
                 return sizeof(banner);
             }
             break;
 
-        case CMD_INFO:
+        case CMD_FWUPDATE_INIT:
             if (state == ST_HELLO) {
-                state = ST_TRANSMIT;
+                state = ST_FWUPDATE;
                 number_of_pages = rq->wValue.word;
 #ifdef DEBUG
-                uart_print("INFO: ");
+                uart_print("INIT: ");
                 uart_putint(number_of_pages, 1);
-                uart_print(" pages to come\r\n");
+                uart_print(" pages\r\n");
 #endif
             }
             break;
 
-        case CMD_MEMPAGE:
-            if (state == ST_TRANSMIT) {
+        case CMD_FWUPDATE_MEMPAGE:
+            if (state == ST_FWUPDATE) {
                 recv_cnt = 0;
                 recv_len = rq->wLength.word;
                 return USB_NO_MSG;
             }
             break;
 
-        case CMD_VERIFY:
-            if (state == ST_TRANSMIT) {
+        case CMD_FWUPDATE_VERIFY:
+            if (state == ST_FWUPDATE) {
                 boot_rww_enable();
                 repl_len = rq->wLength.word;
                 repl_cnt = 0;
@@ -140,12 +146,62 @@ usbFunctionSetup(uchar data[8])
             }
             break;
 
-        case CMD_BYE:
-            state = ST_IDLE;
-            boot_rww_enable();
+        case CMD_FWUPDATE_FINALIZE:
+            if (state == ST_FWUPDATE) {
 #ifdef DEBUG
-            uart_print("BYE\r\n\r\n");
+                uart_print("FINALIZE\r\n");
 #endif
+                boot_rww_enable();
+                state = ST_HELLO;
+            }
+            break;
+
+        case CMD_EEPROM_READ:
+            if (state == ST_HELLO) {
+                uint8_t len = (rq->wIndex.word > EEPROM_BUF_MAX) ? EEPROM_BUF_MAX : rq->wIndex.bytes[0];
+                eeprom_read_block(eeprom_buf, (uint8_t *) rq->wValue.word, len);
+#ifdef DEBUG
+                uart_print("EEPROM addr ");
+                uart_puthex(rq->wValue.bytes[0]);
+                uart_print(": ");
+                uint8_t i;
+                for (i = 0; i < len; i++) {
+                    uart_puthex(eeprom_buf[i]);
+                }
+                uart_newline();
+#endif
+                usbMsgPtr = eeprom_buf;
+                return len;
+            }
+            break;
+
+        case CMD_EEPROM_WRITE:
+            if (state == ST_HELLO) {
+#ifdef DEBUG
+                uart_print("EEPROM write addr ");
+                uart_puthex(rq->wValue.bytes[0]);
+                uart_print(": ");
+                uart_puthex(rq->wIndex.bytes[0]);
+                uart_newline();
+#endif
+                eeprom_update_byte((uint8_t *) rq->wValue.word, rq->wIndex.bytes[0]);
+            }
+            break;
+
+        case CMD_BYE:
+#ifdef DEBUG
+            uart_print("BYE\r\n");
+#endif
+            state = ST_IDLE;
+            break;
+
+        case CMD_RESET:
+            if (state == ST_IDLE) {
+#ifdef DEBUG
+                uart_print("\r\nRESET\r\n");
+#endif
+                state = ST_RESET;
+            }
             break;
     }
     return 0;
@@ -229,8 +285,6 @@ void program(void)
     spi_send_command(0x80 | progress);
     spi_send_command(0x40 | PROGRESS_BAR_ROW_INDEX);
     spi_send_data(0xff);
-
-    progress_bar_changed = 1;
 #endif
 }
 
@@ -244,8 +298,6 @@ void clear_progress_bar(void)
         spi_send_command(0x40 | PROGRESS_BAR_ROW_INDEX);
         spi_send_data(0x00);
     }
-
-    progress_bar_changed = 0;
 }
 #endif
 
@@ -256,10 +308,13 @@ void wdt_init(void)
 }
 
 int
-main(void) {
+main(void)
+{
 #ifdef DEBUG
     uint8_t i;
 #endif
+    uint8_t shutdown_counter = 0;
+
     /* set PB0, PB1, PB2, PB3, PB4 as output, rest input */
     DDRB  = (1 << DDB0) | (1 << DDB1) | (1 << DDB2) | (1 << DDB3) | (1 << DDB5);
     /* set PB2 high, all other outputs low, enable pullups for all inputs */
@@ -274,8 +329,8 @@ main(void) {
     PORTD = ~((1 << PD1) | (1 << PD2) | (1 << PD5) | (1 << PD6) | (1 << PD7)) & 0xff;
 
     /* Shift interrupt vector to bootloader space */
-    MCUCR = (1<<IVCE);
-    MCUCR = (1<<IVSEL);
+    MCUCR = (1 << IVCE);
+    MCUCR = (1 << IVSEL);
 
     uart_init(UART_BRATE_38400_12MHZ);
     uart_putchar('\f');
@@ -288,20 +343,20 @@ main(void) {
     /* Check input port if "Select" is pressed */
     if ((PINC & (1 << PC5)) != 0) {
         /* Nope. Put interrupt vector back in order... */
-        MCUCR = (1<<IVCE);
+        MCUCR = (1 << IVCE);
         MCUCR = 0;
         /* ...and jump to application */
         asm("jmp 0000");
     }
 
-    /* Turn on LCD */
+    /* Turn on LCD backlight */
     PORTD |= (1 << PD5);
 
     uart_print("Welcome\r\n");
 
 #ifndef DEBUG
     lcd_init();
-    lcd_fullscreen(nokia_gfx_splash);
+    lcd_fullscreen(gfx_splash);
 #endif
 
     usbDeviceDisconnect();
@@ -312,7 +367,7 @@ main(void) {
     sei();
     while (1) {
         usbPoll();
-        if (state == ST_TRANSMIT) {
+        if (state == ST_FWUPDATE) {
             if (recv_all) {
 #ifdef DEBUG
                 uart_print("page ");
@@ -323,7 +378,7 @@ main(void) {
                 uart_putint(recv_data.size, 3);
                 uart_print(" bytes: ");
                 
-                for (i = 0; i < 128 && i < recv_data.size; i++) {
+                for (i = 0; i < SPM_PAGESIZE && i < recv_data.size; i++) {
                     if ((i & 0xf) == 0) {
                         uart_newline();
                     }
@@ -335,6 +390,15 @@ main(void) {
                 recv_all = 0;
             }
 
+        } else if (state == ST_RESET) {
+            /*
+             * Reset initiated, delay it for a few loop cycles to make sure
+             * that USB communication properly finishes before disconeccting
+             * so the other side won't get any pipe errors or the like.
+             */
+            if (++shutdown_counter == 10) {
+                break;
+            }
         } else if ((PINC & ((1 << 0) | (1 << 3))) == 0) {
             break;
         }
@@ -343,7 +407,7 @@ main(void) {
     usbDeviceDisconnect();
 
     cli();
-    MCUCR = (1<<IVCE);
+    MCUCR = (1 << IVCE);
     MCUCR = 0;
     wdt_enable(WDTO_60MS);
     while (1);
