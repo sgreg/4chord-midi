@@ -2,10 +2,11 @@
 #
 # 4chord MIDI - udev rule installation script
 #
-# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
 #
 
-UDEV_FILE="4chordMIDI-fluidsynth.rules"
+UDEV_FILE_BOOTFLASH="4chordMIDI-bootflash.rules"
+UDEV_FILE_FLUIDSYNTH="4chordMIDI-fluidsynth.rules"
 UDEV_DIR="/etc/udev/rules.d"
 SCRIPT_FILE="4chordMIDI-fluidsynth.sh"
 SCRIPT_DIR="/usr/local/bin"
@@ -60,7 +61,8 @@ fi
 echo "Taking $prefix, okay."
 
 script=$SCRIPT_DIR/$SCRIPT_FILE
-udev_rule=$UDEV_DIR/${prefix}-${UDEV_FILE}
+fluidsynth_rule=$UDEV_DIR/${prefix}-${UDEV_FILE_FLUIDSYNTH}
+bootflash_rule=$UDEV_DIR/${prefix}-${UDEV_FILE_BOOTFLASH}
 
 if [ -e $script ] ; then
     echo ""
@@ -77,12 +79,12 @@ if [ -e $script ] ; then
     fi
 fi
 
-if [ -e $udev_rule ] ; then
+if [ -e $fluidsynth_rule ] ; then
     echo ""
-    echo "udev rule file $udev_rule exists."
+    echo "udev rule file $fluidsynth_rule exists."
     read -p "Overwrite it? [n/Y] " choice
     if [ -n "$choice" ] && [[ ${choice,,} != "y" ]] ; then
-        echo "Check the UDEV_DIR and UDEV_FILE variables to change the path"
+        echo "Check the UDEV_DIR and UDEV_FILE_FLUIDSYNTH variables to change the path"
         echo ""
         echo "Aborting"
         exit 1
@@ -92,7 +94,10 @@ if [ -e $udev_rule ] ; then
     fi
 fi
 
-similar_rules=$(ls -1 $UDEV_DIR/*-${UDEV_FILE} 2>/dev/null | grep -v $udev_rule)
+similar_fluidsynth_rules=$(ls -1 $UDEV_DIR/*-${UDEV_FILE_FLUIDSYNTH} 2>/dev/null | grep -v $fluidsynth_rule)
+similar_bootflash_rules=$(ls -1 $UDEV_DIR/*-${UDEV_FILE_BOOTFLASH} 2>/dev/null | grep -v $bootflash_rule)
+
+similar_rules="$similar_fluidsynth_rules $similar_bootflash_rules"
 if [ -n "$similar_rules" ] ; then
     echo ""
     echo "Found possible duplicate rule files:"
@@ -112,8 +117,13 @@ echo ""
 echo "Copying script file"
 cp $SCRIPT_FILE $SCRIPT_DIR
 chmod +x $SCRIPT_DIR/$SCRIPT_FILE
-echo "Creating udev rule file"
-sed "s/@USER@/$user/g" $UDEV_FILE | sed "s|@SCRIPT@|$script|g" > $udev_rule
+
+echo "Creating udev rule file for FluidSynth"
+sed "s/@USER@/$user/g" $UDEV_FILE_FLUIDSYNTH | sed "s|@SCRIPT@|$script|g" > $fluidsynth_rule
+
+echo "Creating udev rule file for bootflash"
+cp $UDEV_FILE_BOOTFLASH $bootflash_rule
+
 echo "Reloading udev rules"
 udevadm control --reload-rules
 

@@ -1,0 +1,5 @@
+# 4chord MIDI - bootflash permission setup udev rule
+# Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
+#
+
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="deaf", MODE="0666"
