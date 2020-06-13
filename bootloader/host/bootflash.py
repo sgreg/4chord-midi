@@ -2,7 +2,7 @@
 #
 # 4chord MIDI bootloader - Host side flash tool
 #
-# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
 #
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -51,8 +51,11 @@ CMD_BYE                 = 0xf0
 # Magic numbers expected as CMD_HELLO value and index
 # parameter to get things going in the bootloader.
 # (ASCII for "Moi!" which simply translates to "Hi!")
-HELLO_VALUE = 0x4d71
+HELLO_VALUE = 0x4d6f
 HELLO_INDEX = 0x6921
+
+# Device string expected as response to CMD_HELLO, followed by a version number
+EXPECTED_DEVICE_STRING_PREFIX = "4chord MIDI bootloader "
 
 # Page size in bytes
 PAGESIZE = 128
@@ -117,8 +120,23 @@ and you are ready to give it another try.
 
 total_pages = int(math.ceil(size / float(PAGESIZE)))
 
-# send HELLO and receive bootloader versions tring
+# send HELLO and receive bootloader version string
 hello = dev.ctrl_transfer(USB_RECV, CMD_HELLO, HELLO_VALUE, HELLO_INDEX, PAGESIZE)
+# check hello response?
+version_string=hello.tostring().decode('UTF-8')
+
+if not version_string.startswith(EXPECTED_DEVICE_STRING_PREFIX):
+    print('''Error: Invalid response from bootloader: '{response:s}'
+
+This is either caused by a version / implementation mismatch between
+the bootloader and the bootflash tool, or something may have gone
+wrong during the USB communication.
+
+If you haven't modified the bootloader firmware or the bootflash tool,
+please restart the device into bootloader mode by removing the USB cable
+and re-attaching it while pressing the "Select" button, and try again.
+'''.format(response=version_string))
+    sys.exit(1)
 
 #
 # XXX: if needed later, here is a good place to add version checks and adjust
@@ -144,10 +162,10 @@ print("""
             File size...: {size:d} bytes
             Page size...: {pagesize:d} bytes
             Pages.......: {pages:d}
-            Bootloader..: {device:s}""".format(
+            Bootloader..: {bootloader:s}""".format(
                 binfile=binfile, size=size,
                 pagesize=PAGESIZE, pages=total_pages,
-                device=hello.tostring().decode('UTF-8')))
+                bootloader=version_string))
 
 # send INFO with number of pages to write
 dev.ctrl_transfer(USB_SEND, CMD_FWUPDATE_INIT, total_pages, 0)
