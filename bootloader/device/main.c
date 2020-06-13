@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI bootloader - Main
  *
- * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -75,7 +75,7 @@ static uint8_t eeprom_buf[EEPROM_BUF_MAX];
 #define ST_RESET    3
 uint8_t state = ST_IDLE;
 
-#define HELLO_VALUE 0x4d71
+#define HELLO_VALUE 0x4d6f
 #define HELLO_INDEX 0x6921
 
 #ifndef DEBUG
