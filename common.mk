@@ -1,7 +1,7 @@
 #
 # 4chord MIDI - Common Makefile definitions
 #
-# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
 #
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -66,7 +66,9 @@ ASFLAGS_ASM += -Wa,-gstabs
 LDFLAGS += -Wl,-Map=$(PROGRAM).map,--cref
 
 SIZE_FLAGS += -C --mcu=$(MCU)
-AVRDUDE_FLAGS += -p $(MCU) -c usbasp
+
+AVRDUDE_PROGRAMMER_FLAGS = -c usbasp
+AVRDUDE_FLAGS += -p $(MCU) $(AVRDUDE_PROGRAMMER_FLAGS)
 
 
 .PRECIOUS : %.elf %.o
@@ -94,6 +96,9 @@ $(PROGRAM).elf: $(OBJS)
 	@$(CC) -c $(CFLAGS) -x assembler-with-cpp $(ASFLAGS_ASM) $< -o $@
 
 
+check-programmer:
+	$(AVRDUDE) $(AVRDUDE_FLAGS) -n && echo "SUCCESS" || echo "FAILED"
+
 fuses-dump:
 	@if [ -x $(FUSE_DUMP_TOOL) ] ; then \
 		$(FUSE_DUMP_TOOL) $(FUSE_LOW) $(FUSE_HIGH) $(FUSE_EXTENDED) ; \
@@ -119,5 +124,5 @@ distclean:: clean
 	@echo "[RM]  $(PROGRAM).hex"
 	@rm -f $(PROGRAM).hex
 
-.PHONY: all size fuses-dump fuses clean distclean
+.PHONY: all size check-programmer fuses-dump fuses clean distclean
 

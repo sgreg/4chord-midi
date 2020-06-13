@@ -1,7 +1,7 @@
 #
 # 4chord MIDI - Global Makefile
 #
-# Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
+# Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
 #
 # This program is free software: you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -31,6 +31,12 @@ firmware:
 bootloader:
 	make -C bootloader/device/
 
+check-programmer:
+	make -C firmware/ check-programmer
+
+fuses:
+	make -C firmware/ fuses
+
 program:
 	make -C bootloader/device/ program-all
 
@@ -43,5 +49,5 @@ distclean:
 	make -C firmware/ distclean
 	make -C bootloader/device/ distclean
 
-.PHONY: all tools graphics firmware bootloader program clean distclean
+.PHONY: all tools graphics firmware bootloader check-programmer fuses program clean distclean
 
