@@ -3,9 +3,10 @@ The 4chord MIDI GUI images are licensed under a [Creative Commons Attributions 4
 
 In case you want to create your own graphics, make sure of the following steps:
 
-* use the same size for each category if you don't want to adjust the code (otherwise have a look at [firmware/lcd.c](https://github.com/sgreg/4chord-midi/blob/master/firmware/lcd.c)
-* make sure the XBM file prefix is the same than the basename of the image file
-* have a look at the [xbmtool.sh](https://github.com/sgreg/4chord-midi/blob/master/tools/xbmtool.sh) script
+* Use the same size for each category if you don't want to adjust the code, otherwise have a look at [firmware/lcd.c](../firmware/lcd.c)
+* Make sure the XBM file prefix is the same as the basename of the image file.  
+For example, the [`menu_key.xbm`](gfx/menu_key.xbm) needs to use `menu_key` as prefix as shown in its file.
+* Have a look at the [xbmtool.sh](https://github.com/sgreg/4chord-midi/blob/master/tools/xbmtool.sh) script
 
 
 ### Picture category sizes
