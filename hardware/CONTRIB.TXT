@@ -3,5 +3,5 @@
 ********************************************************************************
 Contact point of any Licensor who wishes to receive modified Documentation:
 
-Sven Gregori <svengregori@gmail.com>
+Sven Gregori <sven@craplab.fi>
 ********************************************************************************
