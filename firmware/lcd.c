@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Nokia LCD handling
  *
- * Copyright (C) 2019 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
  * 8x84px each. Each row is therefore 84 byte wide with each byte representing
  * the 8 pixel height of the row.
  * 
- * The 4chord midi user interface is arranged in 5 areas:
+ * The 4chord MIDI user interface is arranged in 5 areas:
  *      1. Menu (playback mode, key, tempo)
  *      2. Chord key (C, D, E, F, G, A, B)
  *      3. Chord modifier (none, sharp, flat)

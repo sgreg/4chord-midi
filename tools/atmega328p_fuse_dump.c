@@ -1,7 +1,7 @@
 /*
  * AVR ATmega328P fuse bit dump tool
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  *
  * Outputs human readable representation of AVR ATmega328P fuse bit settings.
