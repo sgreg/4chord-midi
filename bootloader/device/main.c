@@ -345,6 +345,8 @@ main(void)
         /* Nope. Put interrupt vector back in order... */
         MCUCR = (1 << IVCE);
         MCUCR = 0;
+        /* ...delay a moment so UART can finish its output... */
+        _delay_ms(1);
         /* ...and jump to application */
         asm("jmp 0000");
     }
