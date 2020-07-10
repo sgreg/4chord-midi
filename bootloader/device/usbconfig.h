@@ -9,13 +9,7 @@
 
 /*
  * Based on vusb-20121206/usbdrv/usbconfig-prototype.h
- * Adjusted for RUDY - the Random USB Device
- * This file defines all common and default values.
- * Each example can override these settings with the following steps:
- *      1. add "CLAGS += -DHAS_CONFIG_OVERRIDES" in its Makefile
- *      2. create usbconfig_overrides.h file for the exaple
- *      3. #undef <CONFIG_DEFINE>
- *      4. #define <CONFIG_DEFINE> <NEW_VALUE>
+ * Adjusted for the 4chord MIDI project
  */
 
 #ifndef __usbconfig_h_included__

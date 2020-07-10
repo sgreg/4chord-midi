@@ -9,7 +9,7 @@
 
 /*
  * Based on vusb-20121206/usbdrv/usbconfig-prototype.h
- * Adjusted for the 4chord midi project
+ * Adjusted for the 4chord MIDI project
  */
 
 #ifndef __usbconfig_h_included__

@@ -1,7 +1,7 @@
 /*
- * 4chord midi - UART communication
+ * 4chord MIDI - UART communication
  *
- * Copyright (C) 2018 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

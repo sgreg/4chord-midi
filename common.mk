@@ -113,10 +113,10 @@ fuses: fuses-dump
 clean:
 	@echo "[RM]  $(OBJS)"
 	@rm -f $(OBJS)
-
-distclean:: clean
 	@echo "[RM]  $(OBJS:.o=.lst)"
 	@rm -f $(OBJS:.o=.lst)
+
+distclean:: clean
 	@echo "[RM]  $(PROGRAM).map"
 	@rm -f $(PROGRAM).map
 	@echo "[RM]  $(PROGRAM).elf"

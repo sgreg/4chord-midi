@@ -6,9 +6,13 @@ Australia's former comedy group [The Axis of Awesome](https://en.wikipedia.org/w
 
 4chord MIDI is a regular USB MIDI controller, just like any other MIDI keyboard, except it has just four buttons, one for each chord in the I-V-vi-IV chord progression, playable in any key. But since simply playing chords is a bit limiting, it also features different playback modes such as triad arpeggios and chords mixed with arpeggios. Additionally, the tempo of each note progression is selectable from 30bpm to 240bpm. It's even shaped like a piano, to give the real feel of playing an actual musical instrument.
 
-4chord MIDI is fully open source. The hardware is licensed under the [CERN Open Hardware License v.1.2](http://www.ohwr.org/projects/cernohl/wiki) and the software is released under the [GNU General Public License version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
-
 For additional information, check out [the 4chord MIDI project website](https://4chord.craplab.fi) and [its hackaday.io project page](https://hackaday.io/project/26078-4chord-midi).
+
+4chord MIDI is fully open source and certified as such by the [Open Source Hardware Association (OSHWA)](https://www.oshwa.org/). The hardware is licensed under the [CERN Open Hardware License v.1.2](http://www.ohwr.org/projects/cernohl/wiki) and the software is released under the [GNU General Public License version 2](http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html).
+
+<p align="center">
+<a href="https://certification.oshwa.org/fi000001.html"><img src="oshwa.png" width="200" alt="[OSHW] FI000001" title="Finland Number One!"></a>
+</p>
 
 ## Table of Contents
   * [Quick Start](#quick-start)
