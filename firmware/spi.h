@@ -1,7 +1,7 @@
 /*
- * 4chord midi - SPI master communication for Nokia 3310 LCD
+ * 4chord MIDI - SPI communication for Nokia 5110 LCD
  *
- * Copyright (C) 2015 Sven Gregori <svengregori@gmail.com>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,7 +21,9 @@
 #include <stdint.h>
 
 /**
- * Initialize SPI master.
+ * Initialize SPI.
+ *
+ * SPI is set up as controller, Mode 0, F_CPU/4 clock speed, MSB first
  */
 void spi_init(void);
 
