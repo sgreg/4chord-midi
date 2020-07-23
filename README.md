@@ -77,6 +77,7 @@ If you *are* interested in more details, well here they come.
 ## Project Structure
 
 * [`bootloader/`](bootloader/) the bootloader for comfortable firmware update flashing
+* [`doc/`](doc/) some relevant documentation such as USB specifications
 * [`firmware/`](firmware/) the main 4chord MIDI firmware code
 * [`graphics/`](graphics/) raw [XBM](https://en.wikipedia.org/wiki/X_BitMap) files used within the GUI and intro animation
 * [`hardware/`](hardware/) schematic and PCB design files

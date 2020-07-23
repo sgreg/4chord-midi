@@ -29,7 +29,7 @@ static const char send_failed_string[] PROGMEM = "USB send failed\r\n";
  * USB MIDI device and configuration descriptor setup
  * For more details, refer to the Universal Serial Bus Device Class Definition
  * for MIDI Devices Release 1.0 document found at
- * http://www.usb.org/developers/docs/devclass_docs/midi10.pdf
+ * https://usb.org/sites/default/files/midi10.pdf
  *
  * The descriptor definition is based and taken from the example found in
  * the above mentioned document, Appendix B.1. and was adjusted to provide
@@ -172,10 +172,10 @@ usbFunctionSetup(uint8_t *data __attribute__((unused)))
  *
  * See also chapter 4 in the Universal Serial Bus Device Class Definition
  * for MIDI Devices Release 1.0 document found at
- * http://www.usb.org/developers/docs/devclass_docs/midi10.pdf
+ * https://usb.org/sites/default/files/midi10.pdf
  *
  * For more information on MIDI messages, refer to Summary of MIDI Messages,
- * found at http://www.midi.org/techspecs/midimessages.php
+ * found at https://www.midi.org/specifications/item/table-1-summary-of-midi-message
  *
  * @param byte0 USB cable number and code index number
  * @param byte1 MIDI message status byte
