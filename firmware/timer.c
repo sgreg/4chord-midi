@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Timer handling
  *
- * Copyright (C) 2017 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -34,8 +34,8 @@ timer0_init_pwm(void)
 {
     /* Fast PWM mode 3, PD5 = 1 on BOTTOM, 0 on OCR0B match */
     TCCR0A = (1 << COM0B1) | (1 << WGM01) | (1 << WGM00);
-    /* prescaler 256 */
-    TCCR0B = (1 << CS02);
+    /* prescaler 64 */
+    TCCR0B = (1 << CS01) | (1 << CS00);
     /* Zero output compare, i.e. lights off */
     OCR0B  = 0;
 }
