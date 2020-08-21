@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - EEPROM data
  *
- * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,11 +21,19 @@
 #include "eeprom.h"
 #include "menu.h"
 #include "uart.h"
+#include "lcd.h"
 
 struct eeprom_data_t eeprom_data EEMEM = {
     /* initial default values */
     .header = {
         .magic = "\xc1\xab\x4c\x0d",
+    },
+    .board_data = {
+        .lcd = {
+            .tcoeff = LCD_DEFAULT_TCOEFF,
+            .bias   = LCD_DEFAULT_BIAS,
+            .vop    = LCD_DEFAULT_VOP,
+        },
     },
     .defaults = {
         .menu  = MENU_KEY,
@@ -91,6 +99,10 @@ restore_defaults(void)
     eeprom_update_byte(&eeprom_data.header.magic[1], 0xab);
     eeprom_update_byte(&eeprom_data.header.magic[2], 0x4c);
     eeprom_update_byte(&eeprom_data.header.magic[3], 0x0d);
+
+    eeprom_update_byte(&eeprom_data.board_data.lcd.tcoeff, LCD_DEFAULT_TCOEFF);
+    eeprom_update_byte(&eeprom_data.board_data.lcd.bias, LCD_DEFAULT_BIAS);
+    eeprom_update_byte(&eeprom_data.board_data.lcd.vop, LCD_DEFAULT_VOP);
 
     eeprom_update_byte(&eeprom_data.defaults.menu, MENU_KEY);
     eeprom_update_byte(&eeprom_data.defaults.key, PLAYBACK_KEY_C);

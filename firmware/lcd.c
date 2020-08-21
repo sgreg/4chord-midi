@@ -58,6 +58,7 @@
 #include "menu.h"
 #include "spi.h"
 #include "xbmlib.h"
+#include "eeprom.h"
 
 #define LCD_START_LINE_ADDR (66-2)
 #define LCD_X_RES   84
@@ -128,10 +129,9 @@ lcd_init(void)
 {
     /* taken from Olimex Arduino example */
     spi_send_command(0x21);
-    spi_send_command(0xc8);
-    spi_send_command(0x04 | !!(LCD_START_LINE_ADDR & (1u << 6)));
-    spi_send_command(0x40 | (LCD_START_LINE_ADDR & ((1u << 6) -1)));
-    spi_send_command(0x12);
+    spi_send_command(eeprom_read_byte(&eeprom_data.board_data.lcd.vop));
+    spi_send_command(eeprom_read_byte(&eeprom_data.board_data.lcd.tcoeff));
+    spi_send_command(eeprom_read_byte(&eeprom_data.board_data.lcd.bias));
     spi_send_command(0x20);
     spi_send_command(0x08);
     spi_send_command(0x0c);

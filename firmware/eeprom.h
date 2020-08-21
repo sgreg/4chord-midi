@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - EEPROM data
  *
- * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -36,8 +36,18 @@ extern struct eeprom_data_t {
     /* reserved for later use (16 bytes) */
     uint8_t __meta[16];                     /* 0x10 */
 
-    /* reserved for later use (16 bytes) */
-    uint8_t __board_data[16];               /* 0x20 */
+    /* board-specific data that may vary between hardware (16 bytes) */
+    struct {
+        struct {
+            /* LCD temperature coefficient (PCD8544 datasheet section 8.7) */
+            uint8_t tcoeff;                 /* 0x20 */
+            /* LCD bias system value (PCD8544 datasheet section 8.8) */
+            uint8_t bias;                   /* 0x21 */
+            /* LCD V_op value (PCD8544 datasheet section 8.9) */
+            uint8_t vop;                    /* 0x22 */
+        } lcd;
+        uint8_t __board_data_reserved[13];  /* 0x23 */
+    } board_data;
 
     /* default settings (16 bytes) */
     struct {
