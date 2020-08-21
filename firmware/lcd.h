@@ -1,7 +1,7 @@
 /*
  * 4chord MIDI - Nokia LCD handling
  *
- * Copyright (C) 2018 Sven Gregori <sven@craplab.fi>
+ * Copyright (C) 2020 Sven Gregori <sven@craplab.fi>
  *
  * This program is free software: you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -27,6 +27,27 @@
 #define lcd_rst_high()  do { LCD_RESET_PORT |=  (1 << LCD_RESET_PIN); } while (0)
 /* set LCD reset pin low */
 #define lcd_rst_low()   do { LCD_RESET_PORT &= ~(1 << LCD_RESET_PIN); } while (0)
+
+
+/**
+ * LCD default temperature coefficient value packed together as
+ * "Temparature control" instruction to send as-is via SPI.
+ * See PCD8544 datasheet section 8.7 for details.
+ */
+#define LCD_DEFAULT_TCOEFF 0x04
+/* LCD bias system value (PCD8544 datasheet section 8.8) */
+/**
+ * LCD default bias system value packed together as
+ * "Bias system" instruction to send as-is via SPI.
+ * See PCD8544 datasheet section 8.8 for details.
+ */
+#define LCD_DEFAULT_BIAS   0x12
+/**
+ * LCD default V_op value packed together as
+ * "Set Vop" instruction to send as-is via SPI.
+ * See PCD8544 datasheet section 8.9 for details.
+ */
+#define LCD_DEFAULT_VOP    0xc8
 
 /**
  * Initialize the LCD.
