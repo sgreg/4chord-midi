@@ -30,7 +30,12 @@ extern struct eeprom_data_t {
          * should be 0xc1ab4c0d -> clab4cod -> CrapLab 4chord MIDI
          */
         uint8_t magic[4];                   /* 0x00 */
-        uint8_t __header_reserved[12];      /* 0x04 */
+        /*
+         * Keeping track of EEPROM data structure version.
+         * See check_update() function in eeprom.c for more information.
+         */
+        uint8_t eeprom_version;             /* 0x04 */
+        uint8_t __header_reserved[11];      /* 0x05 */
     } header;
 
     /* reserved for later use (16 bytes) */
