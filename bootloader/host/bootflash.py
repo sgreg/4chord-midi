@@ -123,7 +123,7 @@ total_pages = int(math.ceil(size / float(PAGESIZE)))
 # send HELLO and receive bootloader version string
 hello = dev.ctrl_transfer(USB_RECV, CMD_HELLO, HELLO_VALUE, HELLO_INDEX, PAGESIZE)
 # check hello response?
-version_string=hello.tostring().decode('UTF-8')
+version_string=hello.tobytes().decode('UTF-8')
 
 if not version_string.startswith(EXPECTED_DEVICE_STRING_PREFIX):
     print('''Error: Invalid response from bootloader: '{response:s}'
@@ -238,6 +238,6 @@ if verbose:
 else:
     print('')
 print('''
-            All Done \o/
+            All Done \\o/
 ''')
 

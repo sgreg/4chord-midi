@@ -75,7 +75,7 @@ AVRDUDE_FLAGS += -p $(MCU) $(AVRDUDE_PROGRAMMER_FLAGS)
 
 all: default size
 
-size:
+size: $(PROGRAM).elf
 	@echo ""
 	@$(SIZE) $(SIZE_FLAGS) $(PROGRAM).elf
 
