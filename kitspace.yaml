@@ -1,1 +1,8 @@
-bom: hardware/ATmega328-TQFP32/4chord-midi.kicad_pcb
+summary: The 4chord USB MIDI Keyboard
+site: https://github.com/sgreg/4chord-midi
+color: purple
+bom: hardware/ATmega328-TQFP32/4chord-midi.bom.csv
+gerbers: hardware/ATmega328-TQFP32/Gerber
+eda:
+  type: kicad
+  pcb: hardware/ATmega328-TQFP32/4chord-midi.kicad_pcb
